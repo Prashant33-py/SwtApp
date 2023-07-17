@@ -1,0 +1,87 @@
+<library>
+    <book>
+        <category>Technology</category>
+        <author>John Doe</author>
+        <title>Introduction to Programming</title>
+    </book>
+    <book>
+        <category>Politics</category>
+        <author>Jane Smith</author>
+        <title>The Power of Democracy</title>
+    </book>
+    <book>
+        <category>Tourism</category>
+        <author>David Williams</author>
+        <title>Explore the World</title>
+    </book>
+    <book>
+        <category>Science</category>
+        <author>Sarah Johnson</author>
+        <title>The Secrets of the Universe</title>
+    </book>
+    <book>
+        <category>Fiction</category>
+        <author>Michael Brown</author>
+        <title>The Lost Kingdom</title>
+    </book>
+    <book>
+        <category>History</category>
+        <author>Emily Davis</author>
+        <title>World War II Chronicles</title>
+    </book>
+    <book>
+        <category>Biography</category>
+        <author>Robert Wilson</author>
+        <title>Living Legends</title>
+    </book>
+    <book>
+        <category>Self-Help</category>
+        <author>Alice Johnson</author>
+        <title>The Path to Success</title>
+    </book>
+    <book>
+        <category>Business</category>
+        <author>Mark Thompson</author>
+        <title>The Art of Negotiation</title>
+    </book>
+    <book>
+        <category>Art</category>
+        <author>Emma Turner</author>
+        <title>Mastering Brush Techniques</title>
+    </book>
+    <book>
+        <category>Technology</category>
+        <author>John Doe</author>
+        <title>Introduction to Programming - Part 2</title>
+    </book>
+    <book>
+        <category>Technology</category>
+        <author>Jane Smith</author>
+        <title>Data Science Fundamentals</title>
+    </book>
+    <book>
+        <category>Technology</category>
+        <author>David Williams</author>
+        <title>Web Development Mastery</title>
+    </book>
+    <book>
+        <category>Politics</category>
+        <author>Michael Lewis</author>
+        <title>The Fifth Risk</title>
+    </book>
+    <book>
+        <category>Politics</category>
+        <author>George Brown</author>
+        <title>International Relations</title>
+    </book>
+    <book>
+        <category>Tourism</category>
+        <author>Emily Davis</author>
+        <title>Travel the World</title>
+    </book>
+    <book>
+        <category>Tourism</category>
+        <author>Robert Wilson</author>
+        <title>Exploring Nature</title>
+    </book>
+</library>

@@ -7,6 +7,10 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 
 public class LoginComponent {
     private Composite composite;
@@ -65,7 +69,17 @@ public class LoginComponent {
                 if (username.equals(VALID_USERNAME) && password.equals(VALID_PASSWORD)) {
                     composite.dispose();
                     HomeComponent homeComponent = new HomeComponent(shell);
-                    homeComponent.createHomeComponent();
+                    try {
+                        try {
+                            homeComponent.createHomeComponent();
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (SAXException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    } catch (ParserConfigurationException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     shell.layout();
                 } else {
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
