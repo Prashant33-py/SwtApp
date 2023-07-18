@@ -51,10 +51,6 @@ public class LoginComponent {
         Text passwordText = new Text(loginComposite, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
         passwordText.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
-//        Combo languageCombo = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY);
-//        languageCombo.setItems(new String[] { "English", "German" });
-//        languageCombo.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
-
         Button loginButton = new Button(composite, SWT.PUSH);
         loginButton.setText("Login");
         loginButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 1));
@@ -64,7 +60,6 @@ public class LoginComponent {
             public void widgetSelected(SelectionEvent e) {
                 String username = usernameText.getText();
                 String password = passwordText.getText();
-//                String language = languageCombo.getText();
 
                 if (username.equals(VALID_USERNAME) && password.equals(VALID_PASSWORD)) {
                     composite.dispose();
