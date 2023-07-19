@@ -1,12 +1,9 @@
 package org.swt.components;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -40,7 +37,7 @@ public class HomeComponent {
         Composite bodyComposite = new Composite(composite.getShell(), SWT.NONE);
         bodyComposite.setLayout(new GridLayout(1, false));
         GridData bodyCompositeData = new GridData(SWT.NONE, SWT.FILL, false, true);
-        bodyCompositeData.widthHint = 250;
+        bodyCompositeData.widthHint = 300;
         bodyComposite.setLayoutData(bodyCompositeData);
 
         TreeComponent treeComponent = new TreeComponent(bodyComposite);

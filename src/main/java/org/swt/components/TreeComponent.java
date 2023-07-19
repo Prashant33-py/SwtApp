@@ -16,7 +16,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class TreeComponent {
@@ -38,8 +37,6 @@ public class TreeComponent {
 
         Map<String, TreeItem> categoryMap = new HashMap<>();
         Map<String, TreeItem> authorMap = new HashMap<>();
-        TreeItem categoryItem;
-        TreeItem authorItem;
 
         for (int i = 0; i < bookNodes.getLength(); i++) {
             Element bookElement = (Element) bookNodes.item(i);
@@ -47,6 +44,7 @@ public class TreeComponent {
             String bookAuthor = bookElement.getElementsByTagName("author").item(0).getTextContent();
             String bookTitle = bookElement.getElementsByTagName("title").item(0).getTextContent();
 
+            TreeItem categoryItem;
             if (categoryMap.containsKey(bookCategory)) {
                 categoryItem = categoryMap.get(bookCategory);
             } else {
@@ -55,7 +53,7 @@ public class TreeComponent {
                 categoryMap.put(bookCategory, categoryItem);
             }
 
-
+            TreeItem authorItem;
             if(authorMap.containsKey(bookAuthor)) {
                 authorItem = authorMap.get(bookAuthor);
             }else{
@@ -66,6 +64,7 @@ public class TreeComponent {
 
             TreeItem titleItem = new TreeItem(authorItem, SWT.NONE);
             titleItem.setText(bookTitle);
+
         }
     }
 
