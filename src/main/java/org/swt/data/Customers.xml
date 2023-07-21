@@ -1,0 +1,8 @@
+<customers>
+    <customer>
+        <customerName>Jack Hammer</customerName>
+        <customerMobileNumber>9830470583</customerMobileNumber>
+        <customerEmail>jack.hammer@gmail.com</customerEmail>
+        <bookPurchased>Explore the World</bookPurchased>
+    </customer>
+</customers>
