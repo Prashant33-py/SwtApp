@@ -67,9 +67,7 @@ public class LoginComponent {
                     try {
                         try {
                             homeComponent.createHomeComponent();
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
-                        } catch (SAXException ex) {
+                        } catch (IOException | SAXException ex) {
                             throw new RuntimeException(ex);
                         }
                     } catch (ParserConfigurationException ex) {

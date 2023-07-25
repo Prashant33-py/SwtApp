@@ -34,14 +34,13 @@ public class HomeComponent {
         welcomeLabel.setFont(font);
         welcomeLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
-        Composite bodyComposite = new Composite(composite.getShell(), SWT.NONE);
-        bodyComposite.setLayout(new GridLayout(1, false));
-        GridData bodyCompositeData = new GridData(SWT.NONE, SWT.FILL, false, true);
-        bodyCompositeData.widthHint = 300;
-        bodyComposite.setLayoutData(bodyCompositeData);
+        Composite homeComposite = new Composite(shell, SWT.NONE);
+        homeComposite.setLayout(new GridLayout(2, false));
+        homeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        TreeComponent treeComponent = new TreeComponent(bodyComposite);
+        TreeComponent treeComponent = new TreeComponent(homeComposite);
         treeComponent.createTreeComponent();
-        bodyComposite.layout();
+
+        homeComposite.layout();
     }
 }
