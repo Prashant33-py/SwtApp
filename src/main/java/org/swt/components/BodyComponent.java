@@ -26,7 +26,6 @@ public class BodyComponent {
         tableComposite = new Composite(bodyComposite, SWT.NONE);
         tableComposite.setLayout(new GridLayout(1,false));
         tableComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        tableComposite.setBackground(new Color(255,255,255));
 
         Label titleLabel = new Label(tableComposite, SWT.NONE);
         titleLabel.setText(criteria);
@@ -63,12 +62,17 @@ public class BodyComponent {
                 for(TreeItem book: children.get(i).getItems()){
                     String key = book.getParentItem().getText();
                     String value = book.getText();
-                    books = books + value;
+                    if(authorBookMap.containsKey(key)){
+                        books = books + ", " + value;
+                    }else{
+                        books = value;
+                    }
                     authorBookMap.put(key, books);
                     tableItem.setText(2, authorBookMap.get(key));
                 }
             }
         }
+
         bodyComposite.layout();
     }
 
