@@ -20,12 +20,14 @@ public class BodyComponent {
         bodyComposite.setLayout(new GridLayout(1,false));
         GridData bodyCompositeData = new GridData(SWT.FILL, SWT.FILL, true, true);
         bodyComposite.setLayoutData(bodyCompositeData);
+        bodyComposite.setBackground(new Color(255,255,255));
     }
 
-    public void createBodyComponent(List<TreeItem> children, String parentCategory, String criteria, String currentCategory) {
+    public Composite createBodyComponent(List<TreeItem> children, String parentCategory, String criteria, String currentCategory) {
         tableComposite = new Composite(bodyComposite, SWT.NONE);
         tableComposite.setLayout(new GridLayout(1,false));
         tableComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        tableComposite.setBackground(new Color(255,255,255));
 
         Label titleLabel = new Label(tableComposite, SWT.NONE);
         titleLabel.setText(criteria);
@@ -72,14 +74,8 @@ public class BodyComponent {
                 }
             }
         }
-
         bodyComposite.layout();
-    }
-
-    public void disposeTable() {
-        if(table != null){
-            tableComposite.dispose();
-        }
+        return bodyComposite;
     }
 
     public String capitalize(String title){

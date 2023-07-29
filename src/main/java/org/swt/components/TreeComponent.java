@@ -1,12 +1,18 @@
 package org.swt.components;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -23,19 +29,19 @@ import java.util.List;
 import java.util.Map;
 
 public class TreeComponent {
-    private Composite treeComposite;
+    private final Composite treeComposite;
     private BodyComponent bodyComponent;
-    private Map<String, TreeItem> categoryMap = new HashMap<>();
-    private Map<String, TreeItem> authorMap = new HashMap<>();
-    private Map<String, TreeItem> openedTabs = new HashMap<>();
-    private TabFolder tabFolder;
+    private final Map<String, TreeItem> categoryMap = new HashMap<>();
+    private final Map<String, TreeItem> authorMap = new HashMap<>();
+    private final Map<String, TreeItem> openedTabs = new HashMap<>();
+    private CTabFolder tabFolder;
     private TreeItem categoryItem;
+    private final Composite homeComposite;
     private TreeItem authorItem;
     private TreeItem titleItem;
     public TreeComponent(Composite homeComposite) {
         this.treeComposite = new Composite(homeComposite, SWT.NONE);
-        this.tabFolder = new TabFolder(homeComposite, SWT.NONE);
-        this.bodyComponent = new BodyComponent(tabFolder);
+        this.homeComposite = homeComposite;
     }
 
     public void createTreeComponent() throws ParserConfigurationException, IOException, SAXException {
@@ -86,12 +92,45 @@ public class TreeComponent {
             titleItem.setData("tag", "title");
         }
 
+        tabFolder = new CTabFolder(homeComposite, SWT.NONE);
+        tabFolder.setLayout(new GridLayout(1, false));
+        tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        tabFolder.setBackground(new Color(255,255,255));
+
+        CTabItem defaultTabItem = new CTabItem(tabFolder, SWT.CLOSE);
+        defaultTabItem.setText("Welcome!");
+        tabFolder.setSelection(defaultTabItem);
+
+        Composite defaultComposite = new Composite(tabFolder, SWT.NONE);
+        defaultComposite.setLayout(new GridLayout(1, false));
+        defaultComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        defaultComposite.setBackground(new Color(255,255,255));
+
+        Label defaultWelcomeLabel = new Label(defaultComposite, SWT.CLOSE);
+        defaultWelcomeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        Font font = new Font(defaultComposite.getDisplay(), "Helvetica", 20, SWT.BOLD);
+        defaultWelcomeLabel.setFont(font);
+        defaultWelcomeLabel.setText("Welcome!");
+        defaultWelcomeLabel.setBackground(new Color(255,255,255));
+
+        Label defaultDescLabel = new Label(defaultComposite, SWT.CLOSE);
+        defaultDescLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        defaultDescLabel.setText("Click on any category to see more books in that category.");
+        defaultDescLabel.setBackground(new Color(255,255,255));
+
+        defaultTabItem.setControl(defaultComposite);
+
         tree.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 TreeItem selectedItem = (TreeItem) e.item;
                 String selectedItemText = selectedItem.getText();
-                TabItem tabItem;
+                CTabItem tabItem = new CTabItem(tabFolder, SWT.CLOSE);
+
+                tabItem.setText(selectedItemText);
+                bodyComponent = new BodyComponent(tabFolder);
+
+                defaultTabItem.dispose();
 
                 if (selectedItem != null) {
                     List<TreeItem> children = new ArrayList<>();
@@ -103,30 +142,29 @@ public class TreeComponent {
                     String parentNode = (String) selectedItem.getData("tag");
                     openedTabs.put(selectedItem.getText(),selectedItem);
                     if ("category".equals(parentNode)) {
-                        handleCategoryItemClick(children, selectedItem.getText());
+                        handleCategoryItemClick(children, selectedItem.getText(),tabItem);
                     } else if ("author".equals(parentNode)) {
-                        handleAuthorItemClick(children, selectedItem.getText());
+                        handleAuthorItemClick(children, selectedItem.getText(),tabItem);
                     } else if ("title".equals(parentNode)) {
-                        handleTitleItemClick(children, selectedItem.getText());
+                        handleTitleItemClick(children, selectedItem.getText(),tabItem);
                     }
                 }
             }
         });
     }
 
-    public void handleCategoryItemClick(List<TreeItem> children, String criteria) {
-        this.bodyComponent.createBodyComponent(children, (String) authorItem.getData("tag"), criteria, (String) categoryItem.getData("tag"));
-    }
-    public void handleAuthorItemClick(List<TreeItem> children, String criteria) {
-        this.bodyComponent.createBodyComponent(children, (String) titleItem.getData("tag"), criteria, (String) authorItem.getData("tag"));
+    public void handleCategoryItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) {
+        tabItem.setControl(this.bodyComponent.createBodyComponent(children, (String) authorItem.getData("tag"), criteria, (String) categoryItem.getData("tag")));
+        tabFolder.setSelection(tabItem);
     }
 
-
-    public void handleTitleItemClick(List<TreeItem> children, String criteria) {
-        this.bodyComponent.createBodyComponent(children, "Title", criteria, (String) titleItem.getData("tag"));
+    public void handleAuthorItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) {
+        tabItem.setControl(this.bodyComponent.createBodyComponent(children, (String) titleItem.getData("tag"), criteria, (String) authorItem.getData("tag")));
+        tabFolder.setSelection(tabItem);
     }
 
-    public void createNewTab(List<TreeItem> children, String parentCategory, String criteria, String currentCategory){
-
+    public void handleTitleItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) {
+        tabItem.setControl(this.bodyComponent.createBodyComponent(children, "Title", criteria, (String) titleItem.getData("tag")));
+        tabFolder.setSelection(tabItem);
     }
 }
