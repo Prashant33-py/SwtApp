@@ -142,28 +142,40 @@ public class TreeComponent {
                     String parentNode = (String) selectedItem.getData("tag");
                     openedTabs.put(selectedItem.getText(),selectedItem);
                     if ("category".equals(parentNode)) {
-                        handleCategoryItemClick(children, selectedItem.getText(),tabItem);
+                        try {
+                            handleCategoryItemClick(children, selectedItem.getText(),tabItem);
+                        } catch (ParserConfigurationException | IOException | SAXException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     } else if ("author".equals(parentNode)) {
-                        handleAuthorItemClick(children, selectedItem.getText(),tabItem);
+                        try {
+                            handleAuthorItemClick(children, selectedItem.getText(),tabItem);
+                        } catch (ParserConfigurationException | IOException | SAXException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     } else if ("title".equals(parentNode)) {
-                        handleTitleItemClick(children, selectedItem.getText(),tabItem);
+                        try {
+                            handleTitleItemClick(children, selectedItem.getText(),tabItem);
+                        } catch (ParserConfigurationException | IOException | SAXException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
                 }
             }
         });
     }
 
-    public void handleCategoryItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) {
+    public void handleCategoryItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) throws ParserConfigurationException, IOException, SAXException {
         tabItem.setControl(this.bodyComponent.createBodyComponent(children, (String) authorItem.getData("tag"), criteria, (String) categoryItem.getData("tag")));
         tabFolder.setSelection(tabItem);
     }
 
-    public void handleAuthorItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) {
+    public void handleAuthorItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) throws ParserConfigurationException, IOException, SAXException {
         tabItem.setControl(this.bodyComponent.createBodyComponent(children, (String) titleItem.getData("tag"), criteria, (String) authorItem.getData("tag")));
         tabFolder.setSelection(tabItem);
     }
 
-    public void handleTitleItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) {
+    public void handleTitleItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) throws ParserConfigurationException, IOException, SAXException {
         tabItem.setControl(this.bodyComponent.createBodyComponent(children, "Title", criteria, (String) titleItem.getData("tag")));
         tabFolder.setSelection(tabItem);
     }

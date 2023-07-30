@@ -1,8 +1,281 @@
 <customers>
+    <!-- Customer 1 -->
     <customer>
-        <customerName>Jack Hammer</customerName>
-        <customerMobileNumber>9830470583</customerMobileNumber>
-        <customerEmail>jack.hammer@gmail.com</customerEmail>
-        <bookPurchased>Explore the World</bookPurchased>
+        <customerName>John Smith</customerName>
+        <customerMobileNumber>+1234567890</customerMobileNumber>
+        <customerEmail>john.smith@example.com</customerEmail>
+        <book>
+            <category>Technology</category>
+            <author>John Doe</author>
+            <title>Introduction to Programming</title>
+        </book>
+        <rating>8.5</rating>
+        <review>A great introduction to programming! The author explains concepts clearly, and the exercises are helpful for beginners.</review>
+    </customer>
+
+    <!-- Customer 2 -->
+    <customer>
+        <customerName>Mary Johnson</customerName>
+        <customerMobileNumber>+9876543210</customerMobileNumber>
+        <customerEmail>mary.johnson@example.com</customerEmail>
+        <book>
+            <category>Politics</category>
+            <author>Janet Smith</author>
+            <title>The Power of Democracy</title>
+        </book>
+        <rating>9.2</rating>
+        <review>An eye-opening book! Janet Smith presents a compelling argument for the importance of democracy in shaping a nation's future.</review>
+    </customer>
+
+    <!-- Customer 3 -->
+    <customer>
+        <customerName>David Brown</customerName>
+        <customerMobileNumber>+1122334455</customerMobileNumber>
+        <customerEmail>david.brown@example.com</customerEmail>
+        <book>
+            <category>Tourism</category>
+            <author>Dave Williams</author>
+            <title>Explore the World</title>
+        </book>
+        <rating>9.0</rating>
+        <review>Explore the World is a fantastic travel guide! It's filled with stunning photographs and practical tips for travelers.</review>
+    </customer>
+
+    <!-- Customer 4 -->
+    <customer>
+        <customerName>Susan Carter</customerName>
+        <customerMobileNumber>+919876543210</customerMobileNumber>
+        <customerEmail>susan.carter@example.com</customerEmail>
+        <book>
+            <category>Science</category>
+            <author>Sarah Johnson</author>
+            <title>The Secrets of the Universe</title>
+        </book>
+        <rating>9.8</rating>
+        <review>Fascinating read! Sarah Johnson takes readers on an awe-inspiring journey through the mysteries of the universe.</review>
+    </customer>
+
+    <!-- Customer 5 -->
+    <customer>
+        <customerName>Michael Adams</customerName>
+        <customerMobileNumber>+19876543210</customerMobileNumber>
+        <customerEmail>michael.adams@example.com</customerEmail>
+        <book>
+            <category>Technology</category>
+            <author>John Doe</author>
+            <title>Introduction to Programming - Part 2</title>
+        </book>
+        <rating>8.0</rating>
+        <review>After reading the first book, I couldn't wait to dive into Part 2! Another excellent resource for learning programming.</review>
+    </customer>
+
+    <!-- Customer 6 -->
+    <customer>
+        <customerName>Emma White</customerName>
+        <customerMobileNumber>+17654321098</customerMobileNumber>
+        <customerEmail>emma.white@example.com</customerEmail>
+        <book>
+            <category>Politics</category>
+            <author>Janet Smith</author>
+            <title>The Power of Democracy</title>
+        </book>
+        <rating>9.5</rating>
+        <review>A must-read for anyone interested in politics. Janet Smith's insights are profound and thought-provoking.</review>
+    </customer>
+
+    <!-- Customer 7 -->
+    <customer>
+        <customerName>Liam Taylor</customerName>
+        <customerMobileNumber>+1472583690</customerMobileNumber>
+        <customerEmail>liam.taylor@example.com</customerEmail>
+        <book>
+            <category>Tourism</category>
+            <author>Dave Williams</author>
+            <title>Explore the World</title>
+        </book>
+        <rating>9.2</rating>
+        <review>As a frequent traveler, I appreciate the detailed information and hidden gems shared in this book.</review>
+    </customer>
+
+    <!-- Customer 8 -->
+    <customer>
+        <customerName>Olivia Moore</customerName>
+        <customerMobileNumber>+10987654321</customerMobileNumber>
+        <customerEmail>olivia.moore@example.com</customerEmail>
+        <book>
+            <category>Science</category>
+            <author>Sarah Johnson</author>
+            <title>The Secrets of the Universe</title>
+        </book>
+        <rating>9.6</rating>
+        <review>One of the best science books I've ever read. Sarah Johnson's passion for the subject shines through every page.</review>
+    </customer>
+
+    <!-- Customer 9 -->
+    <customer>
+        <customerName>James Wilson</customerName>
+        <customerMobileNumber>+1346798520</customerMobileNumber>
+        <customerEmail>james.wilson@example.com</customerEmail>
+        <book>
+            <category>Fiction</category>
+            <author>Michael Brown</author>
+            <title>The Lost Kingdom</title>
+        </book>
+        <rating>8.8</rating>
+        <review>A thrilling adventure novel! Michael Brown's storytelling keeps you hooked until the very end.</review>
+    </customer>
+
+    <!-- Customer 10 -->
+    <customer>
+        <customerName>Emily Johnson</customerName>
+        <customerMobileNumber>+1593574862</customerMobileNumber>
+        <customerEmail>emily.johnson@example.com</customerEmail>
+        <book>
+            <category>History</category>
+            <author>Emily Davidson</author>
+            <title>World War II Chronicles</title>
+        </book>
+        <rating>9.4</rating>
+        <review>A comprehensive account of World War II. Emily Davidson's research is commendable.</review>
+    </customer>
+
+    <!-- Customer 11 -->
+    <customer>
+        <customerName>William Baker</customerName>
+        <customerMobileNumber>+1897654321</customerMobileNumber>
+        <customerEmail>william.baker@example.com</customerEmail>
+        <book>
+            <category>Biography</category>
+            <author>Robert Wilson</author>
+            <title>Living Legends</title>
+        </book>
+        <rating>8.5</rating>
+        <review>A collection of inspiring biographies. Robert Wilson captures the essence of these living legends.</review>
+    </customer>
+
+    <!-- Customer 12 -->
+    <customer>
+        <customerName>Ava Clark</customerName>
+        <customerMobileNumber>+1123581321</customerMobileNumber>
+        <customerEmail>ava.clark@example.com</customerEmail>
+        <book>
+            <category>Self-Help</category>
+            <author>Alice Johnson</author>
+            <title>The Path to Success</title>
+        </book>
+        <rating>9.0</rating>
+        <review>Life-changing advice! Alice Johnson provides actionable steps for personal growth and success.</review>
+    </customer>
+
+    <!-- Customer 13 -->
+    <customer>
+        <customerName>Henry Turner</customerName>
+        <customerMobileNumber>+1010101010</customerMobileNumber>
+        <customerEmail>henry.turner@example.com</customerEmail>
+        <book>
+            <category>Business</category>
+            <author>Mark Thompson</author>
+            <title>The Art of Negotiation</title>
+        </book>
+        <rating>9.8</rating>
+        <review>An invaluable resource for anyone in business. Mark Thompson's negotiation strategies are powerful.</review>
+    </customer>
+
+    <!-- Customer 14 -->
+    <customer>
+        <customerName>Sophia Green</customerName>
+        <customerMobileNumber>+1212121212</customerMobileNumber>
+        <customerEmail>sophia.green@example.com</customerEmail>
+        <book>
+            <category>Art</category>
+            <author>Emma Turner</author>
+            <title>Mastering Brush Techniques</title>
+        </book>
+        <rating>8.2</rating>
+        <review>As an artist, I found Emma Turner's insights on brush techniques helpful. However, I wish there were more examples.</review>
+    </customer>
+
+    <!-- Customer 15 -->
+    <customer>
+        <customerName>Aiden Hall</customerName>
+        <customerMobileNumber>+1747258369</customerMobileNumber>
+        <customerEmail>aiden.hall@example.com</customerEmail>
+        <book>
+            <category>Technology</category>
+            <author>John Doe</author>
+            <title>Introduction to Programming - Part 2</title>
+        </book>
+        <rating>9.2</rating>
+        <review>A continuation of excellence from Part 1. John Doe's teaching style makes learning programming enjoyable.</review>
+    </customer>
+
+    <!-- Customer 16 -->
+    <customer>
+        <customerName>Lily Adams</customerName>
+        <customerMobileNumber>+1516171819</customerMobileNumber>
+        <customerEmail>lily.adams@example.com</customerEmail>
+        <book>
+            <category>Politics</category>
+            <author>Michael Lewis</author>
+            <title>The Fifth Risk</title>
+        </book>
+        <rating>8.9</rating>
+        <review>Michael Lewis uncovers the risks in government transition that many people aren't aware of. A compelling read.</review>
+    </customer>
+
+    <!-- Customer 17 -->
+    <customer>
+        <customerName>Mason Roberts</customerName>
+        <customerMobileNumber>+2021222324</customerMobileNumber>
+        <customerEmail>mason.roberts@example.com</customerEmail>
+        <book>
+            <category>Politics</category>
+            <author>George Brown</author>
+            <title>International Relations</title>
+        </book>
+        <rating>9.1</rating>
+        <review>George Brown's book provides valuable insights into the complexities of international relations in a globalized world.</review>
+    </customer>
+
+    <!-- Customer 18 -->
+    <customer>
+        <customerName>Chloe Turner</customerName>
+        <customerMobileNumber>+2627282930</customerMobileNumber>
+        <customerEmail>chloe.turner@example.com</customerEmail>
+        <book>
+            <category>Tourism</category>
+            <author>Emily Davis</author>
+            <title>Travel the World</title>
+        </book>
+        <rating>9.5</rating>
+        <review>Emily Davis' travel guide is like a companion for globetrotters. It's comprehensive, engaging, and full of useful tips.</review>
+    </customer>
+
+    <!-- Customer 19 -->
+    <customer>
+        <customerName>Jack Wilson</customerName>
+        <customerMobileNumber>+3132333435</customerMobileNumber>
+        <customerEmail>jack.wilson@example.com</customerEmail>
+        <book>
+            <category>Tourism</category>
+            <author>Robert Wilson</author>
+            <title>Exploring Nature</title>
+        </book>
+        <rating>9.3</rating>
+        <review>A delightful book for nature enthusiasts. Robert Wilson's love for the outdoors shines through in his writing.</review>
+    </customer>
+
+    <!-- Customer 20 -->
+    <customer>
+        <customerName>Scarlett Brown</customerName>
+        <customerMobileNumber>+3637383940</customerMobileNumber>
+        <customerEmail>scarlett.brown@example.com</customerEmail>
+        <book>
+            <category>Art</category>
+            <author>Emma Turner</author>
+            <title>Mastering Brush Techniques</title>
+        </book>
+        <rating>8.7</rating>
+        <review>Emma Turner's book on brush techniques is a valuable resource for artists looking to refine their skills.</review>
     </customer>
 </customers>

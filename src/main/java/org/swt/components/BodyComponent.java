@@ -6,7 +6,10 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +26,7 @@ public class BodyComponent {
         bodyComposite.setBackground(new Color(255,255,255));
     }
 
-    public Composite createBodyComponent(List<TreeItem> children, String parentCategory, String criteria, String currentCategory) {
+    public Composite createBodyComponent(List<TreeItem> children, String parentCategory, String criteria, String currentCategory) throws ParserConfigurationException, IOException, SAXException {
         tableComposite = new Composite(bodyComposite, SWT.NONE);
         tableComposite.setLayout(new GridLayout(1,false));
         tableComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -51,6 +54,11 @@ public class BodyComponent {
             TableColumn authorName = new TableColumn(table, SWT.BORDER);
             authorName.setText("Title");
             authorName.setWidth(400);
+        }
+
+        if(currentCategory.equals("title")){
+            BookReviewComponent bookReviewComponent = new BookReviewComponent();
+            bookReviewComponent.createBookReviewComponent();
         }
 
         for(int i = 0; i < children.size(); i++) {
