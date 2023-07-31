@@ -39,6 +39,7 @@ public class TreeComponent {
     private final Composite homeComposite;
     private TreeItem authorItem;
     private TreeItem titleItem;
+
     public TreeComponent(Composite homeComposite) {
         this.treeComposite = new Composite(homeComposite, SWT.NONE);
         this.homeComposite = homeComposite;
@@ -125,6 +126,7 @@ public class TreeComponent {
             public void widgetSelected(SelectionEvent e) {
                 TreeItem selectedItem = (TreeItem) e.item;
                 String selectedItemText = selectedItem.getText();
+
                 CTabItem tabItem = new CTabItem(tabFolder, SWT.CLOSE);
 
                 tabItem.setText(selectedItemText);
@@ -142,20 +144,12 @@ public class TreeComponent {
                     String parentNode = (String) selectedItem.getData("tag");
                     openedTabs.put(selectedItem.getText(),selectedItem);
                     if ("category".equals(parentNode)) {
-                        try {
-                            handleCategoryItemClick(children, selectedItem.getText(),tabItem);
-                        } catch (ParserConfigurationException | IOException | SAXException ex) {
-                            throw new RuntimeException(ex);
-                        }
+                        handleCategoryItemClick(children, selectedItemText,tabItem);
                     } else if ("author".equals(parentNode)) {
-                        try {
-                            handleAuthorItemClick(children, selectedItem.getText(),tabItem);
-                        } catch (ParserConfigurationException | IOException | SAXException ex) {
-                            throw new RuntimeException(ex);
-                        }
+                        handleAuthorItemClick(children, selectedItemText,tabItem);
                     } else if ("title".equals(parentNode)) {
                         try {
-                            handleTitleItemClick(children, selectedItem.getText(),tabItem);
+                            handleTitleItemClick(selectedItemText,tabItem);
                         } catch (ParserConfigurationException | IOException | SAXException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -165,18 +159,19 @@ public class TreeComponent {
         });
     }
 
-    public void handleCategoryItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) throws ParserConfigurationException, IOException, SAXException {
+    public void handleCategoryItemClick(List<TreeItem> children, String criteria, CTabItem tabItem){
         tabItem.setControl(this.bodyComponent.createBodyComponent(children, (String) authorItem.getData("tag"), criteria, (String) categoryItem.getData("tag")));
         tabFolder.setSelection(tabItem);
     }
 
-    public void handleAuthorItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) throws ParserConfigurationException, IOException, SAXException {
+    public void handleAuthorItemClick(List<TreeItem> children, String criteria, CTabItem tabItem){
         tabItem.setControl(this.bodyComponent.createBodyComponent(children, (String) titleItem.getData("tag"), criteria, (String) authorItem.getData("tag")));
         tabFolder.setSelection(tabItem);
     }
 
-    public void handleTitleItemClick(List<TreeItem> children, String criteria, CTabItem tabItem) throws ParserConfigurationException, IOException, SAXException {
-        tabItem.setControl(this.bodyComponent.createBodyComponent(children, "Title", criteria, (String) titleItem.getData("tag")));
-        tabFolder.setSelection(tabItem);
+    public void handleTitleItemClick(String bookTitle, CTabItem tabItem) throws ParserConfigurationException, IOException, SAXException {
+        BookReviewComponent bookReviewComponent = new BookReviewComponent(tabFolder);
+        tabItem.setControl(bookReviewComponent.createBookReviewComponent(bookTitle));
+
     }
 }

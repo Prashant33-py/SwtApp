@@ -26,7 +26,7 @@ public class BodyComponent {
         bodyComposite.setBackground(new Color(255,255,255));
     }
 
-    public Composite createBodyComponent(List<TreeItem> children, String parentCategory, String criteria, String currentCategory) throws ParserConfigurationException, IOException, SAXException {
+    public Composite createBodyComponent(List<TreeItem> children, String parentCategory, String criteria, String currentCategory){
         tableComposite = new Composite(bodyComposite, SWT.NONE);
         tableComposite.setLayout(new GridLayout(1,false));
         tableComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -54,11 +54,6 @@ public class BodyComponent {
             TableColumn authorName = new TableColumn(table, SWT.BORDER);
             authorName.setText("Title");
             authorName.setWidth(400);
-        }
-
-        if(currentCategory.equals("title")){
-            BookReviewComponent bookReviewComponent = new BookReviewComponent();
-            bookReviewComponent.createBookReviewComponent();
         }
 
         for(int i = 0; i < children.size(); i++) {
