@@ -1,18 +1,13 @@
 package org.swt.components;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -34,7 +29,7 @@ public class TreeComponent {
     private final Map<String, TreeItem> categoryMap = new HashMap<>();
     private final Map<String, TreeItem> authorMap = new HashMap<>();
     private final Map<String, TreeItem> openedTabs = new HashMap<>();
-    private CTabFolder tabFolder;
+    private TabFolder tabFolder;
     private TreeItem categoryItem;
     private final Composite homeComposite;
     private TreeItem authorItem;
@@ -93,33 +88,83 @@ public class TreeComponent {
             titleItem.setData("tag", "title");
         }
 
-        tabFolder = new CTabFolder(homeComposite, SWT.NONE);
+        tabFolder = new TabFolder(homeComposite, SWT.NONE);
         tabFolder.setLayout(new GridLayout(1, false));
         tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         tabFolder.setBackground(new Color(255,255,255));
 
-        CTabItem defaultTabItem = new CTabItem(tabFolder, SWT.CLOSE);
-        defaultTabItem.setText("Welcome!");
-        tabFolder.setSelection(defaultTabItem);
+        //Category tab item
+        TabItem categoryTabItem = new TabItem(tabFolder, SWT.CLOSE);
+        categoryTabItem.setText("Category");
+        tabFolder.setSelection(categoryTabItem);
 
-        Composite defaultComposite = new Composite(tabFolder, SWT.NONE);
-        defaultComposite.setLayout(new GridLayout(1, false));
-        defaultComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        defaultComposite.setBackground(new Color(255,255,255));
+        Composite categoryComposite = new Composite(tabFolder, SWT.NONE);
+        categoryComposite.setLayout(new GridLayout(1, false));
+        categoryComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        categoryComposite.setBackground(new Color(255,255,255));
 
-        Label defaultWelcomeLabel = new Label(defaultComposite, SWT.CLOSE);
-        defaultWelcomeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-        Font font = new Font(defaultComposite.getDisplay(), "Helvetica", 20, SWT.BOLD);
-        defaultWelcomeLabel.setFont(font);
-        defaultWelcomeLabel.setText("Welcome!");
-        defaultWelcomeLabel.setBackground(new Color(255,255,255));
+        Label categoryLabel = new Label(categoryComposite, SWT.CLOSE);
+        categoryLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        Font font = new Font(categoryComposite.getDisplay(), "Helvetica", 20, SWT.BOLD);
+        categoryLabel.setFont(font);
+        categoryLabel.setText("Category");
+        categoryLabel.setBackground(new Color(255,255,255));
 
-        Label defaultDescLabel = new Label(defaultComposite, SWT.CLOSE);
-        defaultDescLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-        defaultDescLabel.setText("Click on any category to see more books in that category.");
-        defaultDescLabel.setBackground(new Color(255,255,255));
+        Label categroyDescLabel = new Label(categoryComposite, SWT.CLOSE);
+        categroyDescLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        categroyDescLabel.setText("Click on any category to see more books in that category.");
+        categroyDescLabel.setBackground(new Color(255,255,255));
 
-        defaultTabItem.setControl(defaultComposite);
+        categoryTabItem.setControl(categoryComposite);
+        //end
+
+        //Author tab item
+        TabItem authorTabItem = new TabItem(tabFolder, SWT.CLOSE);
+        authorTabItem.setText("Author");
+        tabFolder.setSelection(categoryTabItem);
+
+        Composite authorComposite = new Composite(tabFolder, SWT.NONE);
+        authorComposite.setLayout(new GridLayout(1, false));
+        authorComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        authorComposite.setBackground(new Color(255,255,255));
+
+        Label authorLabel = new Label(authorComposite, SWT.CLOSE);
+        authorLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        authorLabel.setFont(font);
+        authorLabel.setText("Author");
+        authorLabel.setBackground(new Color(255,255,255));
+
+        Label authorDescLabel = new Label(authorComposite, SWT.CLOSE);
+        authorDescLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        authorDescLabel.setText("Click on any author to see the books they wrote.");
+        authorDescLabel.setBackground(new Color(255,255,255));
+
+        authorTabItem.setControl(authorComposite);
+        //end
+
+        //Title tab item
+        TabItem titleTabItem = new TabItem(tabFolder, SWT.CLOSE);
+        titleTabItem.setText("Title");
+        tabFolder.setSelection(categoryTabItem);
+
+        Composite titleComposite = new Composite(tabFolder, SWT.NONE);
+        titleComposite.setLayout(new GridLayout(1, false));
+        titleComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        titleComposite.setBackground(new Color(255,255,255));
+
+        Label titleLabel = new Label(titleComposite, SWT.CLOSE);
+        titleLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        titleLabel.setFont(font);
+        titleLabel.setText("Title");
+        titleLabel.setBackground(new Color(255,255,255));
+
+        Label titleDescLabel = new Label(titleComposite, SWT.CLOSE);
+        titleDescLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        titleDescLabel.setText("Click on any title to view the book reviews.");
+        titleDescLabel.setBackground(new Color(255,255,255));
+
+        titleTabItem.setControl(titleComposite);
+        //end
 
         tree.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -127,12 +172,7 @@ public class TreeComponent {
                 TreeItem selectedItem = (TreeItem) e.item;
                 String selectedItemText = selectedItem.getText();
 
-                CTabItem tabItem = new CTabItem(tabFolder, SWT.CLOSE);
-
-                tabItem.setText(selectedItemText);
                 bodyComponent = new BodyComponent(tabFolder);
-
-                defaultTabItem.dispose();
 
                 if (selectedItem != null) {
                     List<TreeItem> children = new ArrayList<>();
@@ -144,12 +184,12 @@ public class TreeComponent {
                     String parentNode = (String) selectedItem.getData("tag");
                     openedTabs.put(selectedItem.getText(),selectedItem);
                     if ("category".equals(parentNode)) {
-                        handleCategoryItemClick(children, selectedItemText,tabItem);
+                        handleCategoryItemClick(children, selectedItemText,categoryTabItem);
                     } else if ("author".equals(parentNode)) {
-                        handleAuthorItemClick(children, selectedItemText,tabItem);
+                        handleAuthorItemClick(children, selectedItemText,authorTabItem);
                     } else if ("title".equals(parentNode)) {
                         try {
-                            handleTitleItemClick(selectedItemText,tabItem);
+                            handleTitleItemClick(selectedItemText,titleTabItem);
                         } catch (ParserConfigurationException | IOException | SAXException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -159,19 +199,19 @@ public class TreeComponent {
         });
     }
 
-    public void handleCategoryItemClick(List<TreeItem> children, String criteria, CTabItem tabItem){
+    public void handleCategoryItemClick(List<TreeItem> children, String criteria, TabItem tabItem){
         tabItem.setControl(this.bodyComponent.createBodyComponent(children, (String) authorItem.getData("tag"), criteria, (String) categoryItem.getData("tag")));
         tabFolder.setSelection(tabItem);
     }
 
-    public void handleAuthorItemClick(List<TreeItem> children, String criteria, CTabItem tabItem){
+    public void handleAuthorItemClick(List<TreeItem> children, String criteria, TabItem tabItem){
         tabItem.setControl(this.bodyComponent.createBodyComponent(children, (String) titleItem.getData("tag"), criteria, (String) authorItem.getData("tag")));
         tabFolder.setSelection(tabItem);
     }
 
-    public void handleTitleItemClick(String bookTitle, CTabItem tabItem) throws ParserConfigurationException, IOException, SAXException {
+    public void handleTitleItemClick(String bookTitle, TabItem tabItem) throws ParserConfigurationException, IOException, SAXException {
         BookReviewComponent bookReviewComponent = new BookReviewComponent(tabFolder);
         tabItem.setControl(bookReviewComponent.createBookReviewComponent(bookTitle));
-
+        tabFolder.setSelection(tabItem);
     }
 }
