@@ -8,13 +8,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,22 +19,24 @@ public class BodyComponent {
     public Composite bodyComposite;
     public Table table;
     public Composite tableComposite;
-    public BodyComponent(Composite homeComposite) {
-        this.bodyComposite = new Composite(homeComposite, SWT.NONE);
+    public TabFolder tabFolder;
+    public BodyComponent(Composite tabFolder) {
+        this.tabFolder = (TabFolder) tabFolder;
+        this.bodyComposite = new Composite(tabFolder, SWT.NONE);
         bodyComposite.setLayout(new GridLayout(1,false));
         GridData bodyCompositeData = new GridData(SWT.FILL, SWT.FILL, true, true);
         bodyComposite.setLayoutData(bodyCompositeData);
         bodyComposite.setBackground(new Color(255,255,255));
     }
 
-    public Composite createBodyComponent(List<TreeItem> children, String parentCategory, String criteria, String currentCategory){
+    public Composite createTable(List<TreeItem> children, String childCategoryTag, String criteriaName, String currentCategoryTag) {
         tableComposite = new Composite(bodyComposite, SWT.NONE);
         tableComposite.setLayout(new GridLayout(1,false));
         tableComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         tableComposite.setBackground(new Color(255,255,255));
 
         Label titleLabel = new Label(tableComposite, SWT.NONE);
-        titleLabel.setText(criteria);
+        titleLabel.setText(criteriaName);
         titleLabel.setFont(new Font(bodyComposite.getDisplay(), "Helvetica", 16, SWT.BOLD));
         titleLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
         titleLabel.setBackground(new Color(255,255,255));
@@ -52,10 +50,10 @@ public class BodyComponent {
         columnNo.setWidth(50);
 
         TableColumn columnName = new TableColumn(table, SWT.BORDER);
-        columnName.setText(capitalize(parentCategory));
+        columnName.setText(capitalize(childCategoryTag));
         columnName.setWidth(250);
 
-        if(currentCategory.equals("category")){
+        if(currentCategoryTag.equals("category")){
             TableColumn authorName = new TableColumn(table, SWT.BORDER);
             authorName.setText("Title");
             authorName.setWidth(400);
@@ -65,7 +63,7 @@ public class BodyComponent {
             TableItem tableItem = new TableItem(table, SWT.BORDER);
             tableItem.setText(0, String.format("%d", i+1));
             tableItem.setText(1, children.get(i).getText());
-            if(currentCategory.equals("category")){
+            if(currentCategoryTag.equals("category")){
                 columnName.setWidth(150);
                 Map<String, String> authorBookMap = new HashMap<>();
                 String books = "";
@@ -82,20 +80,31 @@ public class BodyComponent {
                 }
             }
         }
-
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDoubleClick(MouseEvent e) {
-                updateTable(e, children, titleLabel);
+                if(childCategoryTag.equals("author")){
+                    updateAuthorTable(e, children);
+                }
+                else{
+                    System.out.println("Not author");
+                }
             }
         });
-
+        if(bodyComposite.getChildren().length > 1){
+            bodyComposite.getChildren()[0].dispose();
+        }
         bodyComposite.layout();
         return bodyComposite;
     }
 
-    public void updateTable(MouseEvent e, List<TreeItem> children, Label columnName){
+    public String capitalize(String title){
+        return title.toUpperCase().charAt(0) + title.substring(1);
+    }
+
+    public void updateAuthorTable(MouseEvent e, List<TreeItem> children) {
         String selectedItemText;
+        TabItem authorTabItem;
         Point point = new Point(e.x, e.y);
         TableItem item = table.getItem(point);
         int columnIndex = -1;
@@ -109,14 +118,19 @@ public class BodyComponent {
         if (columnIndex != -1) {
             selectedItemText = item.getText(columnIndex);
             for(TreeItem treeItem : children) {
-                if(treeItem.getText().equals(selectedItemText)){
-//                    createBodyComponent(Arrays.asList(treeItem.getItem(0)), (String) treeItem.getItem(0).getParentItem().getData("tag"), treeItem.getItem(0).getParentItem().getText(), (String) treeItem.getItem(0).getData("tag"));
+                if (treeItem.getText().equals(selectedItemText)) {
+                    authorTabItem = tabFolder.getItem(1);
+                    List<TreeItem> treeItemChildren = Arrays.asList(treeItem.getItems());
+                    tableComposite.dispose();
+
+                    String childCategoryTag = (String) treeItem.getItem(0).getData("tag");
+                    String criteriaName = selectedItemText;
+                    String currentCategoryTag = (String) treeItem.getItem(0).getParentItem().getData("tag");
+
+                    authorTabItem.setControl(createTable(treeItemChildren, childCategoryTag, criteriaName, currentCategoryTag));
+                    tabFolder.setSelection(authorTabItem);
                 }
             }
         }
-    }
-
-    public String capitalize(String title){
-        return title.toUpperCase().charAt(0) + title.substring(1);
     }
 }

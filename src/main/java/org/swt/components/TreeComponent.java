@@ -18,10 +18,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TreeComponent {
     private final Composite treeComposite;
@@ -34,6 +32,8 @@ public class TreeComponent {
     private final Composite homeComposite;
     private TreeItem authorItem;
     private TreeItem titleItem;
+    private List<TreeItem> children = new ArrayList<>();
+    private String selectedItemText;
 
     public TreeComponent(Composite homeComposite) {
         this.treeComposite = new Composite(homeComposite, SWT.NONE);
@@ -170,48 +170,61 @@ public class TreeComponent {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 TreeItem selectedItem = (TreeItem) e.item;
-                String selectedItemText = selectedItem.getText();
+                selectedItemText = selectedItem.getText();
 
                 bodyComponent = new BodyComponent(tabFolder);
 
-                if (selectedItem != null) {
-                    List<TreeItem> children = new ArrayList<>();
-                    if (selectedItem.getItemCount() > 0) {
-                        for (int i = 0; i < selectedItem.getItemCount(); i++) {
-                            children.add(selectedItem.getItem(i));
-                        }
+                if (selectedItem.getItemCount() > 0) {
+                    if(!children.isEmpty()) {
+                        children.clear();
                     }
-                    String parentNode = (String) selectedItem.getData("tag");
-                    openedTabs.put(selectedItem.getText(),selectedItem);
-                    if ("category".equals(parentNode)) {
-                        handleCategoryItemClick(children, selectedItemText,categoryTabItem);
-                    } else if ("author".equals(parentNode)) {
-                        handleAuthorItemClick(children, selectedItemText,authorTabItem);
-                    } else if ("title".equals(parentNode)) {
-                        try {
-                            handleTitleItemClick(selectedItemText,titleTabItem);
-                        } catch (ParserConfigurationException | IOException | SAXException ex) {
-                            throw new RuntimeException(ex);
-                        }
+                    for (int i = 0; i < selectedItem.getItemCount(); i++) {
+                        children.add(selectedItem.getItem(i));
                     }
+                }
+
+                String parentNode = (String) selectedItem.getData("tag");
+                openedTabs.put(selectedItem.getText(),selectedItem);
+                if ("category".equals(parentNode)) {
+                    handleCategoryItemClick(children, selectedItemText, categoryTabItem);
+                } else if ("author".equals(parentNode)) {
+                    handleAuthorItemClick(children, selectedItemText, authorTabItem);
+                } else if ("title".equals(parentNode)) {
+                    try {
+                        handleTitleItemClick(selectedItemText, titleTabItem);
+                    } catch (ParserConfigurationException | IOException | SAXException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+        });
+
+        tabFolder.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                TabItem newAuthorTabItem = (TabItem) e.item;
+                if(newAuthorTabItem.getText().equals("Category")){
+                    authorTabItem.setControl(authorComposite);
+                    categoryTabItem.setControl(bodyComponent.createTable(children, (String) authorItem.getData("tag"), selectedItemText, (String) categoryItem.getData("tag")));
                 }
             }
         });
     }
 
-    public void handleCategoryItemClick(List<TreeItem> children, String criteria, TabItem tabItem){
-        tabItem.setControl(this.bodyComponent.createBodyComponent(children, (String) authorItem.getData("tag"), criteria, (String) categoryItem.getData("tag")));
-        tabFolder.setSelection(tabItem);
+    public void handleCategoryItemClick(List<TreeItem> children, String criteriaName, TabItem categoryTabItem){
+        Composite newCategoryComposite = this.bodyComponent.createTable(children, (String) authorItem.getData("tag"), criteriaName, (String) categoryItem.getData("tag"));
+        categoryTabItem.setControl(newCategoryComposite);
+        tabFolder.setSelection(categoryTabItem);
     }
 
-    public void handleAuthorItemClick(List<TreeItem> children, String criteria, TabItem tabItem){
-        tabItem.setControl(this.bodyComponent.createBodyComponent(children, (String) titleItem.getData("tag"), criteria, (String) authorItem.getData("tag")));
-        tabFolder.setSelection(tabItem);
+    public void handleAuthorItemClick(List<TreeItem> children, String criteriaName, TabItem authorTabItem){
+        authorTabItem.setControl(this.bodyComponent.createTable(children, (String) titleItem.getData("tag"), criteriaName, (String) authorItem.getData("tag")));
+        tabFolder.setSelection(authorTabItem);
     }
 
-    public void handleTitleItemClick(String bookTitle, TabItem tabItem) throws ParserConfigurationException, IOException, SAXException {
+    public void handleTitleItemClick(String bookTitle, TabItem titleTabItem) throws ParserConfigurationException, IOException, SAXException {
         BookReviewComponent bookReviewComponent = new BookReviewComponent(tabFolder);
-        tabItem.setControl(bookReviewComponent.createBookReviewComponent(bookTitle));
-        tabFolder.setSelection(tabItem);
+        titleTabItem.setControl(bookReviewComponent.createBookReviewComponent(bookTitle));
+        tabFolder.setSelection(titleTabItem);
     }
 }
