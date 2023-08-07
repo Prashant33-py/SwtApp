@@ -13,8 +13,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
 public class LoginComponent {
-    private Composite composite;
-    private Shell shell;
+    private final Composite composite;
+    private final Shell shell;
     private static final String VALID_USERNAME = "abc";
     private static final String VALID_PASSWORD = "123";
     public LoginComponent(Shell shell) {

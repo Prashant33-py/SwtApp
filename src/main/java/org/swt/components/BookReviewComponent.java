@@ -21,6 +21,7 @@ import java.io.IOException;
 public class BookReviewComponent {
     private final Composite bookReviewComposite;
     private String bookAuthor;
+    private Element book;
     public BookReviewComponent(Composite bookReviewComposite){
         this.bookReviewComposite  = new Composite(bookReviewComposite, SWT.NONE);
         this.bookReviewComposite.setLayout(new GridLayout(1, false));
@@ -28,8 +29,7 @@ public class BookReviewComponent {
         this.bookReviewComposite.setBackground(new Color(255,255,255));
     }
 
-    public Composite createBookReviewComponent(String bookTitle) throws ParserConfigurationException, IOException, SAXException {
-
+    public Composite createBookReviewComponent(String bookTitle, NodeList bookNodes) throws ParserConfigurationException, IOException, SAXException {
         Label bookTitleLabel = new Label(this.bookReviewComposite, SWT.NONE);
         bookTitleLabel.setText(bookTitle);
         bookTitleLabel.setFont(new Font(this.bookReviewComposite.getDisplay(), "Helvetica", 16, SWT.BOLD));
@@ -49,11 +49,21 @@ public class BookReviewComponent {
         reviewsComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         reviewsComposite.setBackground(new Color(255,255,255));
 
+        for(int i = 0; i < bookNodes.getLength(); i++) {
+            Element bookElement = (Element) bookNodes.item(i);
+            String bookAuthorName = bookElement.getElementsByTagName("author").item(0).getTextContent();
+            String bookTitleName = bookElement.getElementsByTagName("title").item(0).getTextContent();
+            if(bookTitle.equals(bookTitleName)){
+                this.bookAuthor = bookAuthorName;
+            }
+
+        }
+
         for (int i = 0; i < customerNodes.getLength(); i++) {
             Element bookReviewElement = (Element) customerNodes.item(i);
-            Element book = (Element) bookReviewElement.getElementsByTagName("book").item(0);
+            book = (Element) bookReviewElement.getElementsByTagName("book").item(0);
             String bookName = book.getElementsByTagName("title").item(0).getTextContent();
-            this.bookAuthor = book.getElementsByTagName("author").item(0).getTextContent();
+
             String customerName = bookReviewElement.getElementsByTagName("customerName").item(0).getTextContent();
             String customerRating = bookReviewElement.getElementsByTagName("rating").item(0).getTextContent();
             String customerReview = bookReviewElement.getElementsByTagName("review").item(0).getTextContent();
@@ -77,6 +87,7 @@ public class BookReviewComponent {
                 reviewLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
             }
         }
+
         bookAuthorLabel.setText("by "+bookAuthor);
         bookAuthorLabel.setBackground(new Color(255,255, 255));
 
