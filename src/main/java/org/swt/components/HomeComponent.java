@@ -1,5 +1,6 @@
 package org.swt.components;
 
+import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -7,19 +8,26 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 
 public class HomeComponent {
     private final Shell shell;
     private final Composite composite;
     private FormComponent formComponent;
+    private Logger logger;
 
-    public HomeComponent(Shell shell) {
+    public HomeComponent(Shell shell, Logger logger) {
         this.composite = new Composite(shell, SWT.NONE);
         this.shell = shell;
+        this.logger = logger;
     }
 
     public void createHomeComponent() throws ParserConfigurationException, IOException, SAXException {
@@ -35,6 +43,8 @@ public class HomeComponent {
         welcomeLabel.setFont(font);
         welcomeLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
+        NodeList bookNodes = createNodeList();
+        System.out.println(bookNodes.getLength());
         /*
           Creation of menu bar
          */
@@ -66,16 +76,25 @@ public class HomeComponent {
         /*
           Creation of Tree Component
          */
-        TreeComponent treeComponent = new TreeComponent(homeComposite);
-        treeComponent.createTreeComponent();
+        TreeComponent treeComponent = new TreeComponent(homeComposite, logger);
+        treeComponent.createTreeComponent(bookNodes);
 
         addItem.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                formComponent = new FormComponent(shell.getDisplay());
+                formComponent = new FormComponent(shell.getDisplay(), logger);
                 formComponent.createAddBookForm();
+                TreeComponent newTreeComponent = new TreeComponent(homeComposite, logger);
                 try {
-                    treeComponent.createTreeComponent();
+                    NodeList newBookNodes = createNodeList();
+                    System.out.println("Number of books: "+newBookNodes.getLength());
+                    Composite newTreeComposite = newTreeComponent.createTreeComponent(newBookNodes);
+
+                    Label newBookLabel = new Label(newTreeComposite, SWT.BORDER);
+                    newBookLabel.setText("This is new tree composite");
+
+                    newTreeComposite.layout();
+
                 } catch (ParserConfigurationException | IOException | SAXException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -97,6 +116,15 @@ public class HomeComponent {
             }
         });
 
+        homeComposite.redraw();
         homeComposite.layout();
+    }
+
+    public NodeList createNodeList() throws ParserConfigurationException, IOException, SAXException {
+        File xmlFile = new File("./src/main/java/org/swt/data/Books.xml");
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(xmlFile);
+        return doc.getElementsByTagName("book");
     }
 }

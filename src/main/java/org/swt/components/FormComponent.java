@@ -1,5 +1,6 @@
 package org.swt.components;
 
+import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,9 +28,11 @@ import java.io.IOException;
 public class FormComponent {
     public Shell newShell;
     public Display newDisplay;
+    private Logger logger;
 
-    public FormComponent(Display display){
+    public FormComponent(Display display, Logger logger){
         newDisplay = display;
+        this.logger = logger;
     }
     public void createAddBookForm(){
         newShell = new Shell(newDisplay);
@@ -100,7 +103,6 @@ public class FormComponent {
                 String bookAuthor = addAuthorNameText.getText();
                 String bookCategory = addCategoryNameText.getText();
 
-                System.out.println(messageLabel.getText());
                 if(bookTitle.isEmpty()){
                     messageLabel.setText("The title of the book cannot be empty!");
                     messageLabel.setForeground(new Color(255, 0, 0));
@@ -143,8 +145,14 @@ public class FormComponent {
                         StreamResult result = new StreamResult(xmlFile);
                         transformer.transform(source, result);
 
+                        addCategoryNameText.setText("");
+                        addAuthorNameText.setText("");
+                        addBookNameText.setText("");
+
+                        logger.info("{} has been added to the library successfully!",bookTitle);
+
                     } catch (ParserConfigurationException | SAXException | TransformerException | IOException err) {
-                        err.printStackTrace();
+                        logger.error(err);
                     }
                 }
             }
@@ -165,5 +173,4 @@ public class FormComponent {
             }
         }
     }
-
 }

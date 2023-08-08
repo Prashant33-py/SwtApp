@@ -1,5 +1,6 @@
 package org.swt.components;
 
+import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -20,8 +21,10 @@ public class BodyComponent {
     public Table table;
     public Composite tableComposite;
     public TabFolder tabFolder;
-    public BodyComponent(Composite tabFolder) {
+    private final Logger logger;
+    public BodyComponent(Composite tabFolder, Logger logger) {
         this.tabFolder = (TabFolder) tabFolder;
+        this.logger = logger;
         this.bodyComposite = new Composite(tabFolder, SWT.NONE);
         bodyComposite.setLayout(new GridLayout(1,false));
         GridData bodyCompositeData = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -80,6 +83,26 @@ public class BodyComponent {
                 }
             }
         }
+
+        Menu contextMenu = new Menu(table);
+        // Create menu items
+        MenuItem menuItem1 = new MenuItem(contextMenu, SWT.PUSH);
+        menuItem1.setText("Option 1");
+        MenuItem menuItem2 = new MenuItem(contextMenu, SWT.PUSH);
+        menuItem2.setText("Option 2");
+
+        table.setMenu(contextMenu);
+
+        table.addMenuDetectListener(e -> {
+            Point mouseLocation = table.toDisplay(e.x-358,e.y-165);
+            Point selectedTableItemLocation = table.toControl(e.x,e.y);
+            TableItem selectedTableItem = table.getItem(selectedTableItemLocation);
+
+            System.out.println(selectedTableItem);
+            contextMenu.setLocation(mouseLocation);
+            contextMenu.setVisible(true);
+        });
+
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDoubleClick(MouseEvent e) {
@@ -106,6 +129,7 @@ public class BodyComponent {
         String selectedItemText;
         TabItem authorTabItem;
         Point point = new Point(e.x, e.y);
+        System.out.println(point);
         TableItem item = table.getItem(point);
         int columnIndex = -1;
         for (int i = 0; i < table.getColumnCount(); i++) {

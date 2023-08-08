@@ -1,5 +1,6 @@
 package org.swt.components;
 
+import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -22,8 +23,10 @@ public class BookReviewComponent {
     private final Composite bookReviewComposite;
     private String bookAuthor;
     private Element book;
-    public BookReviewComponent(Composite bookReviewComposite){
+    private Logger logger;
+    public BookReviewComponent(Composite bookReviewComposite, Logger logger){
         this.bookReviewComposite  = new Composite(bookReviewComposite, SWT.NONE);
+        this.logger = logger;
         this.bookReviewComposite.setLayout(new GridLayout(1, false));
         this.bookReviewComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         this.bookReviewComposite.setBackground(new Color(255,255,255));

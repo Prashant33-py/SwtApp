@@ -1,5 +1,7 @@
 package org.swt.components;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -17,13 +19,13 @@ public class LoginComponent {
     private final Shell shell;
     private static final String VALID_USERNAME = "abc";
     private static final String VALID_PASSWORD = "123";
+    private final Logger logger = LogManager.getLogger();
     public LoginComponent(Shell shell) {
         this.composite = new Composite(shell, SWT.NONE);
         this.shell = shell;
     }
 
     public void createLoginComponent(){
-
         composite.setLayout(new GridLayout(1, false));
         composite.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,true,false));
 
@@ -62,8 +64,9 @@ public class LoginComponent {
                 String password = passwordText.getText();
 
                 if (username.equals(VALID_USERNAME) && password.equals(VALID_PASSWORD)) {
+                    logger.info("{} logged in successfully!",username);
                     composite.dispose();
-                    HomeComponent homeComponent = new HomeComponent(shell);
+                    HomeComponent homeComponent = new HomeComponent(shell, logger);
                     try {
                         try {
                             homeComponent.createHomeComponent();
@@ -75,6 +78,7 @@ public class LoginComponent {
                     }
                     shell.layout();
                 } else {
+                    logger.error("Unable to login because of incorrect password.");
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
                     messageBox.setText("Error");
                     messageBox.setMessage("Invalid username or password");

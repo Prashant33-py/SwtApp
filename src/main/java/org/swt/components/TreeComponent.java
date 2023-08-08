@@ -1,5 +1,6 @@
 package org.swt.components;
 
+import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -8,18 +9,14 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class TreeComponent {
     private final Composite treeComposite;
@@ -32,36 +29,47 @@ public class TreeComponent {
     private final Composite homeComposite;
     private TreeItem authorItem;
     private TreeItem titleItem;
-    private List<TreeItem> children = new ArrayList<>();
+    private final List<TreeItem> children = new ArrayList<>();
     private String selectedItemText;
     private NodeList bookNodes;
-
-    public TreeComponent(Composite homeComposite) {
+    private final Logger logger;
+    private Tree tree;
+    public TreeComponent(Composite homeComposite, Logger logger) {
         this.treeComposite = new Composite(homeComposite, SWT.NONE);
         this.homeComposite = homeComposite;
+        this.logger = logger;
     }
 
-    public void createTreeComponent() throws ParserConfigurationException, IOException, SAXException {
-        Tree tree = new Tree(treeComposite, SWT.NONE);
+    public Composite createTreeComponent(NodeList bookNodes) {
+        Composite treeHeaderComposite = new Composite(treeComposite, SWT.NONE);
+        treeHeaderComposite.setLayout(new GridLayout(2, false));
+        treeHeaderComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+        treeHeaderComposite.setBackground(new Color(255,255,255));
+
+
+        Label treeLabel = new Label(treeHeaderComposite, SWT.NONE);
+        treeLabel.setText("Criteria");
+        treeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        treeLabel.setBackground(new Color(255,255,255));
+
+        this.tree = new Tree(treeComposite, SWT.NONE);
         treeComposite.setLayout(new GridLayout(1, false));
         treeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+        treeComposite.setBackground(new Color(255,255,255));
 
         GridData treeCompositeData = new GridData(SWT.FILL, SWT.FILL, false, true);
         treeCompositeData.widthHint = 300;
         tree.setLayoutData(treeCompositeData);
 
-        File xmlFile = new File("./src/main/java/org/swt/data/Books.xml");
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(xmlFile);
-
-        bookNodes = doc.getElementsByTagName("book");
+        this.bookNodes = bookNodes;
 
         for (int i = 0; i < bookNodes.getLength(); i++) {
             Element bookElement = (Element) bookNodes.item(i);
             String bookCategory = bookElement.getElementsByTagName("category").item(0).getTextContent();
             String bookAuthor = bookElement.getElementsByTagName("author").item(0).getTextContent();
             String bookTitle = bookElement.getElementsByTagName("title").item(0).getTextContent();
+
+            System.out.println(bookTitle);
 
             if (categoryMap.containsKey(bookCategory)) {
                 categoryItem = categoryMap.get(bookCategory);
@@ -111,10 +119,10 @@ public class TreeComponent {
         categoryLabel.setText("Category");
         categoryLabel.setBackground(new Color(255,255,255));
 
-        Label categroyDescLabel = new Label(categoryComposite, SWT.CLOSE);
-        categroyDescLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-        categroyDescLabel.setText("Click on any category to see more books in that category.");
-        categroyDescLabel.setBackground(new Color(255,255,255));
+        Label categoryDescLabel = new Label(categoryComposite, SWT.CLOSE);
+        categoryDescLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        categoryDescLabel.setText("Click on any category to see more books in that category.");
+        categoryDescLabel.setBackground(new Color(255,255,255));
 
         categoryTabItem.setControl(categoryComposite);
         //end
@@ -167,13 +175,15 @@ public class TreeComponent {
         titleTabItem.setControl(titleComposite);
         //end
 
+        System.out.println("tree created!");
+
         tree.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 TreeItem selectedItem = (TreeItem) e.item;
                 selectedItemText = selectedItem.getText();
 
-                bodyComponent = new BodyComponent(tabFolder);
+                bodyComponent = new BodyComponent(tabFolder, logger);
 
                 if (selectedItem.getItemCount() > 0) {
                     if(!children.isEmpty()) {
@@ -206,16 +216,16 @@ public class TreeComponent {
                 TabItem newAuthorTabItem = (TabItem) e.item;
                 if(newAuthorTabItem.getText().equals("Category")){
                     authorTabItem.setControl(authorComposite);
-                    System.out.println(categoryTabItem.getControl());
                     categoryTabItem.setControl(bodyComponent.createTable(children, (String) authorItem.getData("tag"), selectedItemText, (String) categoryItem.getData("tag")));
                 }
             }
         });
+
+        return treeComposite;
     }
 
     public void handleCategoryItemClick(List<TreeItem> children, String criteriaName, TabItem categoryTabItem){
-        Composite newCategoryComposite = this.bodyComponent.createTable(children, (String) authorItem.getData("tag"), criteriaName, (String) categoryItem.getData("tag"));
-        categoryTabItem.setControl(newCategoryComposite);
+        categoryTabItem.setControl(this.bodyComponent.createTable(children, (String) authorItem.getData("tag"), criteriaName, (String) categoryItem.getData("tag")));
         tabFolder.setSelection(categoryTabItem);
     }
 
@@ -225,7 +235,7 @@ public class TreeComponent {
     }
 
     public void handleTitleItemClick(String bookTitle, TabItem titleTabItem) throws ParserConfigurationException, IOException, SAXException {
-        BookReviewComponent bookReviewComponent = new BookReviewComponent(tabFolder);
+        BookReviewComponent bookReviewComponent = new BookReviewComponent(tabFolder, logger);
         titleTabItem.setControl(bookReviewComponent.createBookReviewComponent(bookTitle, bookNodes));
         tabFolder.setSelection(titleTabItem);
     }
