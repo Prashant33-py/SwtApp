@@ -1,5 +1,6 @@
 package org.swt.components;
 
+import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -8,18 +9,16 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 
 public class TreeComponent {
     private final Composite treeComposite;
@@ -32,16 +31,18 @@ public class TreeComponent {
     private final Composite homeComposite;
     private TreeItem authorItem;
     private TreeItem titleItem;
-    private List<TreeItem> children = new ArrayList<>();
+    private final List<TreeItem> children = new ArrayList<>();
     private String selectedItemText;
     private NodeList bookNodes;
+    private final Logger logger;
 
-    public TreeComponent(Composite homeComposite) {
+    public TreeComponent(Composite homeComposite, Logger logger) {
         this.treeComposite = new Composite(homeComposite, SWT.NONE);
         this.homeComposite = homeComposite;
+        this.logger = logger;
     }
 
-    public void createTreeComponent() throws ParserConfigurationException, IOException, SAXException {
+    public void createTreeComponent(NodeList bookNodes) {
         Tree tree = new Tree(treeComposite, SWT.NONE);
         treeComposite.setLayout(new GridLayout(1, false));
         treeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
@@ -50,12 +51,7 @@ public class TreeComponent {
         treeCompositeData.widthHint = 300;
         tree.setLayoutData(treeCompositeData);
 
-        File xmlFile = new File("./src/main/java/org/swt/data/Books.xml");
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(xmlFile);
-
-        bookNodes = doc.getElementsByTagName("book");
+        this.bookNodes = bookNodes;
 
         for (int i = 0; i < bookNodes.getLength(); i++) {
             Element bookElement = (Element) bookNodes.item(i);
@@ -173,7 +169,7 @@ public class TreeComponent {
                 TreeItem selectedItem = (TreeItem) e.item;
                 selectedItemText = selectedItem.getText();
 
-                bodyComponent = new BodyComponent(tabFolder);
+                bodyComponent = new BodyComponent(tabFolder, logger);
 
                 if (selectedItem.getItemCount() > 0) {
                     if(!children.isEmpty()) {
@@ -225,7 +221,7 @@ public class TreeComponent {
     }
 
     public void handleTitleItemClick(String bookTitle, TabItem titleTabItem) throws ParserConfigurationException, IOException, SAXException {
-        BookReviewComponent bookReviewComponent = new BookReviewComponent(tabFolder);
+        BookReviewComponent bookReviewComponent = new BookReviewComponent(tabFolder, logger);
         titleTabItem.setControl(bookReviewComponent.createBookReviewComponent(bookTitle, bookNodes));
         tabFolder.setSelection(titleTabItem);
     }

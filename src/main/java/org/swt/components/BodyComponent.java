@@ -1,5 +1,6 @@
 package org.swt.components;
 
+import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -20,8 +21,10 @@ public class BodyComponent {
     public Table table;
     public Composite tableComposite;
     public TabFolder tabFolder;
-    public BodyComponent(Composite tabFolder) {
+    private Logger logger;
+    public BodyComponent(Composite tabFolder, Logger logger) {
         this.tabFolder = (TabFolder) tabFolder;
+        this.logger = logger;
         this.bodyComposite = new Composite(tabFolder, SWT.NONE);
         bodyComposite.setLayout(new GridLayout(1,false));
         GridData bodyCompositeData = new GridData(SWT.FILL, SWT.FILL, true, true);

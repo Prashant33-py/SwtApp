@@ -85,19 +85,4 @@
         <author>Robert Wilson</author>
         <title>Exploring Nature</title>
     </book>
-    <book>
-        <category>Business</category>
-        <author>Laura White</author>
-        <title>Strategic Management</title>
-    </book>
-<book>
-<category>Art</category>
-<author>Oliver Turner</author>
-<title>Photography Masterclass</title>
-</book>
-<book>
-<category>Self-Help</category>
-<author>Thomas Adams</author>
-<title>Emotional Intelligence</title>
-</book>
 </library>
