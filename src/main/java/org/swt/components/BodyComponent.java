@@ -85,6 +85,7 @@ public class BodyComponent {
         }
 
         Menu contextMenu = new Menu(table);
+//        Menu contextMenu2 = new Menu(table);
         // Create menu items
         MenuItem menuItem1 = new MenuItem(contextMenu, SWT.PUSH);
         menuItem1.setText("Option 1");
@@ -98,9 +99,14 @@ public class BodyComponent {
             Point selectedTableItemLocation = table.toControl(e.x,e.y);
             TableItem selectedTableItem = table.getItem(selectedTableItemLocation);
 
-            System.out.println(selectedTableItem);
-            contextMenu.setLocation(mouseLocation);
-            contextMenu.setVisible(true);
+            for(TreeItem treeItem : children){
+                if(treeItem.getText().equals(selectedTableItem.getText(1))){
+                    contextMenu.setLocation(mouseLocation);
+                    contextMenu.setVisible(true);
+                }else{
+                    contextMenu.setVisible(false);
+                }
+            }
         });
 
         table.addMouseListener(new MouseAdapter() {
@@ -129,7 +135,6 @@ public class BodyComponent {
         String selectedItemText;
         TabItem authorTabItem;
         Point point = new Point(e.x, e.y);
-        System.out.println(point);
         TableItem item = table.getItem(point);
         int columnIndex = -1;
         for (int i = 0; i < table.getColumnCount(); i++) {

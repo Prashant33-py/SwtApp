@@ -4,8 +4,7 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -19,7 +18,7 @@ import java.util.*;
 import java.util.List;
 
 public class TreeComponent {
-    private final Composite treeComposite;
+//    private final Composite treeComposite;
     private BodyComponent bodyComponent;
     private final Map<String, TreeItem> categoryMap = new HashMap<>();
     private final Map<String, TreeItem> authorMap = new HashMap<>();
@@ -35,27 +34,21 @@ public class TreeComponent {
     private final Logger logger;
     private Tree tree;
     public TreeComponent(Composite homeComposite, Logger logger) {
-        this.treeComposite = new Composite(homeComposite, SWT.NONE);
+//        this.treeComposite = new Composite(homeComposite, SWT.NONE);
         this.homeComposite = homeComposite;
         this.logger = logger;
     }
 
     public Composite createTreeComponent(NodeList bookNodes) {
-        Composite treeHeaderComposite = new Composite(treeComposite, SWT.NONE);
-        treeHeaderComposite.setLayout(new GridLayout(2, false));
-        treeHeaderComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-        treeHeaderComposite.setBackground(new Color(255,255,255));
 
+        Composite baseTreeComposite = new Composite(homeComposite, SWT.NONE);
+        baseTreeComposite.setLayout(new GridLayout(2, false));
+        baseTreeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        Label treeLabel = new Label(treeHeaderComposite, SWT.NONE);
-        treeLabel.setText("Criteria");
-        treeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-        treeLabel.setBackground(new Color(255,255,255));
-
-        this.tree = new Tree(treeComposite, SWT.NONE);
-        treeComposite.setLayout(new GridLayout(1, false));
-        treeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-        treeComposite.setBackground(new Color(255,255,255));
+        this.tree = new Tree(baseTreeComposite, SWT.NONE);
+//        treeComposite.setLayout(new GridLayout(1, false));
+//        treeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+//        treeComposite.setBackground(new Color(255,255,255));
 
         GridData treeCompositeData = new GridData(SWT.FILL, SWT.FILL, false, true);
         treeCompositeData.widthHint = 300;
@@ -68,8 +61,6 @@ public class TreeComponent {
             String bookCategory = bookElement.getElementsByTagName("category").item(0).getTextContent();
             String bookAuthor = bookElement.getElementsByTagName("author").item(0).getTextContent();
             String bookTitle = bookElement.getElementsByTagName("title").item(0).getTextContent();
-
-            System.out.println(bookTitle);
 
             if (categoryMap.containsKey(bookCategory)) {
                 categoryItem = categoryMap.get(bookCategory);
@@ -97,7 +88,7 @@ public class TreeComponent {
             titleItem.setData("tag", "title");
         }
 
-        tabFolder = new TabFolder(homeComposite, SWT.NONE);
+        tabFolder = new TabFolder(baseTreeComposite, SWT.NONE);
         tabFolder.setLayout(new GridLayout(1, false));
         tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         tabFolder.setBackground(new Color(255,255,255));
@@ -175,8 +166,6 @@ public class TreeComponent {
         titleTabItem.setControl(titleComposite);
         //end
 
-        System.out.println("tree created!");
-
         tree.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -221,7 +210,12 @@ public class TreeComponent {
             }
         });
 
-        return treeComposite;
+
+        if(homeComposite.getChildren().length > 1) {
+            homeComposite.getChildren()[0].dispose();
+        }
+        homeComposite.layout(true);
+        return homeComposite;
     }
 
     public void handleCategoryItemClick(List<TreeItem> children, String criteriaName, TabItem categoryTabItem){
@@ -238,5 +232,10 @@ public class TreeComponent {
         BookReviewComponent bookReviewComponent = new BookReviewComponent(tabFolder, logger);
         titleTabItem.setControl(bookReviewComponent.createBookReviewComponent(bookTitle, bookNodes));
         tabFolder.setSelection(titleTabItem);
+    }
+
+    public void disposeTreeComponent(){
+        tabFolder.dispose();
+        tree.dispose();
     }
 }

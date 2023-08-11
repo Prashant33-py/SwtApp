@@ -28,8 +28,10 @@ import java.io.IOException;
 public class FormComponent {
     public Shell newShell;
     public Display newDisplay;
-    private Logger logger;
-
+    private final Logger logger;
+    private Text addCategoryNameText;
+    private Text addAuthorNameText;
+    private Text addBookNameText;
     public FormComponent(Display display, Logger logger){
         newDisplay = display;
         this.logger = logger;
@@ -56,7 +58,6 @@ public class FormComponent {
         formBodyComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         Label messageLabel = new Label(formBodyComposite, SWT.NONE);
-        messageLabel.setText("");
         messageLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
         Composite mainFormBodyComposite = new Composite(formBodyComposite, SWT.NONE);
@@ -67,21 +68,21 @@ public class FormComponent {
         addCategoryName.setText("Enter the category:");
         addCategoryName.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
-        Text addCategoryNameText = new Text(mainFormBodyComposite, SWT.BORDER);
+        addCategoryNameText = new Text(mainFormBodyComposite, SWT.BORDER);
         addCategoryNameText.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true,false));
 
         Label addAuthorName = new Label(mainFormBodyComposite, SWT.NONE);
         addAuthorName.setText("Enter the author's name:");
         addAuthorName.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
-        Text addAuthorNameText = new Text(mainFormBodyComposite, SWT.BORDER);
+        addAuthorNameText = new Text(mainFormBodyComposite, SWT.BORDER);
         addAuthorNameText.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true,false));
 
         Label addBookName = new Label(mainFormBodyComposite, SWT.NONE);
         addBookName.setText("Enter the book name:");
         addBookName.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
-        Text addBookNameText = new Text(mainFormBodyComposite, SWT.BORDER);
+        addBookNameText = new Text(mainFormBodyComposite, SWT.BORDER);
         addBookNameText.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
         Composite buttonsComposite = new Composite(formBodyComposite, SWT.NONE);
@@ -114,43 +115,7 @@ public class FormComponent {
                     messageLabel.setForeground(new Color(255, 0, 0));
                 }else {
                     try {
-                        File xmlFile = new File("./src/main/java/org/swt/data/Books.xml");
-                        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                        DocumentBuilder builder = factory.newDocumentBuilder();
-                        Document doc = builder.parse(xmlFile);
-
-                        Element newBook = doc.createElement("book");
-
-                        Element bookCategoryTag = doc.createElement("category");
-                        bookCategoryTag.appendChild(doc.createTextNode(bookCategory));
-
-                        Element bookAuthorTag = doc.createElement("author");
-                        bookAuthorTag.appendChild(doc.createTextNode(bookAuthor));
-
-                        Element bookTitleTag = doc.createElement("title");
-                        bookTitleTag.appendChild(doc.createTextNode(bookTitle));
-
-                        newBook.appendChild(bookCategoryTag);
-                        newBook.appendChild(bookAuthorTag);
-                        newBook.appendChild(bookTitleTag);
-
-                        Node books = doc.getElementsByTagName("library").item(0);
-                        books.appendChild(newBook);
-
-                        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-                        Transformer transformer = transformerFactory.newTransformer();
-                        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-                        DOMSource source = new DOMSource(doc);
-                        StreamResult result = new StreamResult(xmlFile);
-                        transformer.transform(source, result);
-
-                        addCategoryNameText.setText("");
-                        addAuthorNameText.setText("");
-                        addBookNameText.setText("");
-
-                        logger.info("{} has been added to the library successfully!",bookTitle);
-
+                        saveBookToXMLFile(bookTitle, bookAuthor, bookCategory);
                     } catch (ParserConfigurationException | SAXException | TransformerException | IOException err) {
                         logger.error(err);
                     }
@@ -167,10 +132,51 @@ public class FormComponent {
         });
 
         newShell.open();
+        newShell.layout(true);
+
         while (!newShell.isDisposed()) {
             if (!newDisplay.readAndDispatch()) {
                 newDisplay.sleep();
             }
         }
+    }
+
+    public void saveBookToXMLFile(String bookTitle, String bookAuthor, String bookCategory) throws ParserConfigurationException, IOException, SAXException, TransformerException {
+        File xmlFile = new File("./src/main/java/org/swt/data/Books.xml");
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(xmlFile);
+
+        Element newBook = doc.createElement("book");
+
+        Element bookCategoryTag = doc.createElement("category");
+        bookCategoryTag.appendChild(doc.createTextNode(bookCategory));
+
+        Element bookAuthorTag = doc.createElement("author");
+        bookAuthorTag.appendChild(doc.createTextNode(bookAuthor));
+
+        Element bookTitleTag = doc.createElement("title");
+        bookTitleTag.appendChild(doc.createTextNode(bookTitle));
+
+        newBook.appendChild(bookCategoryTag);
+        newBook.appendChild(bookAuthorTag);
+        newBook.appendChild(bookTitleTag);
+
+        Node books = doc.getElementsByTagName("library").item(0);
+        books.appendChild(newBook);
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+        DOMSource source = new DOMSource(doc);
+        StreamResult result = new StreamResult(xmlFile);
+        transformer.transform(source, result);
+
+        addCategoryNameText.setText("");
+        addAuthorNameText.setText("");
+        addBookNameText.setText("");
+
+        logger.info("{} has been added to the library successfully!",bookTitle);
     }
 }

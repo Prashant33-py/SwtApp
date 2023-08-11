@@ -17,12 +17,13 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class HomeComponent {
     private final Shell shell;
     private final Composite composite;
     private FormComponent formComponent;
-    private Logger logger;
+    private final Logger logger;
 
     public HomeComponent(Shell shell, Logger logger) {
         this.composite = new Composite(shell, SWT.NONE);
@@ -44,7 +45,6 @@ public class HomeComponent {
         welcomeLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
         NodeList bookNodes = createNodeList();
-        System.out.println(bookNodes.getLength());
         /*
           Creation of menu bar
          */
@@ -70,7 +70,7 @@ public class HomeComponent {
         cancelItem.setText("&Cancel");
 
         Composite homeComposite = new Composite(shell, SWT.NONE);
-        homeComposite.setLayout(new GridLayout(2, false));
+        homeComposite.setLayout(new GridLayout(1, false));
         homeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         /*
@@ -84,17 +84,12 @@ public class HomeComponent {
             public void widgetSelected(SelectionEvent e) {
                 formComponent = new FormComponent(shell.getDisplay(), logger);
                 formComponent.createAddBookForm();
-                TreeComponent newTreeComponent = new TreeComponent(homeComposite, logger);
                 try {
                     NodeList newBookNodes = createNodeList();
-                    System.out.println("Number of books: "+newBookNodes.getLength());
+                    TreeComponent newTreeComponent = new TreeComponent(homeComposite, logger);
                     Composite newTreeComposite = newTreeComponent.createTreeComponent(newBookNodes);
 
-                    Label newBookLabel = new Label(newTreeComposite, SWT.BORDER);
-                    newBookLabel.setText("This is new tree composite");
-
-                    newTreeComposite.layout();
-
+                    System.out.println(Arrays.toString(newTreeComposite.getChildren()));
                 } catch (ParserConfigurationException | IOException | SAXException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -115,8 +110,6 @@ public class HomeComponent {
                 fileMenu.dispose();
             }
         });
-
-        homeComposite.redraw();
         homeComposite.layout();
     }
 
