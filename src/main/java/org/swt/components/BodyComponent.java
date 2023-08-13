@@ -4,6 +4,8 @@ import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
@@ -22,6 +24,7 @@ public class BodyComponent {
     public Composite tableComposite;
     public TabFolder tabFolder;
     private final Logger logger;
+    private TableItem rightClickedTableItem;
     public BodyComponent(Composite tabFolder, Logger logger) {
         this.tabFolder = (TabFolder) tabFolder;
         this.logger = logger;
@@ -85,27 +88,35 @@ public class BodyComponent {
         }
 
         Menu contextMenu = new Menu(table);
-//        Menu contextMenu2 = new Menu(table);
-        // Create menu items
-        MenuItem menuItem1 = new MenuItem(contextMenu, SWT.PUSH);
-        menuItem1.setText("Option 1");
-        MenuItem menuItem2 = new MenuItem(contextMenu, SWT.PUSH);
-        menuItem2.setText("Option 2");
+
+        MenuItem editBook = new MenuItem(contextMenu, SWT.PUSH);
+        editBook.setText("Edit Book");
+        MenuItem cancel = new MenuItem(contextMenu, SWT.PUSH);
+        cancel.setText("Cancel");
 
         table.setMenu(contextMenu);
 
         table.addMenuDetectListener(e -> {
             Point mouseLocation = table.toDisplay(e.x-358,e.y-165);
             Point selectedTableItemLocation = table.toControl(e.x,e.y);
-            TableItem selectedTableItem = table.getItem(selectedTableItemLocation);
+            rightClickedTableItem = table.getItem(selectedTableItemLocation);
+            contextMenu.setVisible(true);
+        });
 
-            for(TreeItem treeItem : children){
-                if(treeItem.getText().equals(selectedTableItem.getText(1))){
-                    contextMenu.setLocation(mouseLocation);
-                    contextMenu.setVisible(true);
-                }else{
-                    contextMenu.setVisible(false);
-                }
+        editBook.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                FormComponent formComponent = new FormComponent(bodyComposite.getDisplay(), logger);
+                System.out.println(rightClickedTableItem.getText(1));
+                System.out.println();
+                formComponent.editBookForm();
+            }
+        });
+
+        cancel.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                System.out.println("Cancel selected");
             }
         });
 

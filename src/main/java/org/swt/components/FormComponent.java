@@ -2,6 +2,8 @@ package org.swt.components;
 
 import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -128,6 +130,197 @@ public class FormComponent {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 newShell.close();
+            }
+        });
+
+        Display.getDefault().addFilter(SWT.KeyDown, event -> {
+            if ((event.stateMask & SWT.CTRL) != 0 && event.keyCode == 's') {
+                Control[] children = mainFormBodyComposite.getChildren();
+                String bookTitle = "";
+                String bookAuthor = "";
+                String bookCategory = "";
+                for (Control control : children) {
+                    if (control instanceof Text) {
+                        Text textField = (Text) control;
+                        String text = textField.getText();
+
+                        if(bookCategory.isEmpty()){
+                            bookCategory = text;
+                            continue;
+                        }
+                        if(bookAuthor.isEmpty()){
+                            bookAuthor = text;
+                            continue;
+                        }
+
+                        if(bookTitle.isEmpty()){
+                            bookTitle = text;
+                        }
+                    }
+                }
+
+                try {
+                    saveBookToXMLFile(bookTitle, bookAuthor, bookCategory);
+                } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
+                    throw new RuntimeException(e);
+                }
+                event.doit = false;
+            }
+
+            if ((event.stateMask & SWT.CTRL) != 0 && event.keyCode == 'z') {
+                addCategoryNameText.setText("");
+                addAuthorNameText.setText("");
+                addBookNameText.setText("");
+            }
+        });
+
+        newShell.open();
+        newShell.layout(true);
+
+        while (!newShell.isDisposed()) {
+            if (!newDisplay.readAndDispatch()) {
+                newDisplay.sleep();
+            }
+        }
+    }
+
+
+    public void editBookForm(){
+        newShell = new Shell(newDisplay);
+        newShell.setText("Edit Book");
+        newShell.setLayout(new GridLayout(1, false));
+        newShell.setSize(550,350);
+        newShell.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+
+        Composite formComposite = new Composite(newShell, SWT.CENTER);
+        formComposite.setLayout(new GridLayout(1,false));
+        GridData formGridData = new GridData(SWT.CENTER, SWT.CENTER, true, true);
+        formGridData.widthHint = 450;
+        formGridData.heightHint = 250;
+        formComposite.setLayoutData(formGridData);
+
+        Label addBookLabel = new Label(formComposite, SWT.NONE);
+        addBookLabel.setText("Edit the details you want to change.");
+
+        Composite formBodyComposite = new Composite(formComposite, SWT.BORDER);
+        formBodyComposite.setLayout(new GridLayout(1, false));
+        formBodyComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        Label messageLabel = new Label(formBodyComposite, SWT.NONE);
+        messageLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+
+        Composite mainFormBodyComposite = new Composite(formBodyComposite, SWT.NONE);
+        mainFormBodyComposite.setLayout(new GridLayout(2, false));
+        mainFormBodyComposite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+
+        Label addCategoryName = new Label(mainFormBodyComposite, SWT.NONE);
+        addCategoryName.setText("Enter the category:");
+        addCategoryName.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+
+        addCategoryNameText = new Text(mainFormBodyComposite, SWT.BORDER);
+        addCategoryNameText.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true,false));
+
+        Label addAuthorName = new Label(mainFormBodyComposite, SWT.NONE);
+        addAuthorName.setText("Enter the author's name:");
+        addAuthorName.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+
+        addAuthorNameText = new Text(mainFormBodyComposite, SWT.BORDER);
+        addAuthorNameText.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true,false));
+
+        Label addBookName = new Label(mainFormBodyComposite, SWT.NONE);
+        addBookName.setText("Enter the book name:");
+        addBookName.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+
+        addBookNameText = new Text(mainFormBodyComposite, SWT.BORDER);
+        addBookNameText.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+
+        Composite buttonsComposite = new Composite(formBodyComposite, SWT.NONE);
+        buttonsComposite.setLayout(new GridLayout(2,true));
+        GridData buttonsData = new GridData(SWT.CENTER, SWT.CENTER, true, true);
+        buttonsData.horizontalSpan = 2;
+        buttonsComposite.setLayoutData(buttonsData);
+
+        Button cancelButton = new Button(buttonsComposite, SWT.NONE);
+        cancelButton.setText("Cancel");
+
+        Button saveButton = new Button(buttonsComposite, SWT.NONE);
+        saveButton.setText("Update");
+
+        saveButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+
+                String bookTitle = addBookNameText.getText();
+                String bookAuthor = addAuthorNameText.getText();
+                String bookCategory = addCategoryNameText.getText();
+
+                if(bookTitle.isEmpty()){
+                    messageLabel.setText("The title of the book cannot be empty!");
+                    messageLabel.setForeground(new Color(255, 0, 0));
+                }
+                else if(bookAuthor.isEmpty()){
+                    messageLabel.setText("The author of the book cannot be empty!");
+                    messageLabel.setForeground(new Color(255, 0, 0));
+                }else if(bookCategory.isEmpty()){
+                    messageLabel.setText("The category of the book cannot be empty!");
+                    messageLabel.setForeground(new Color(255, 0, 0));
+                }
+                else {
+                    try {
+                        saveBookToXMLFile(bookTitle, bookAuthor, bookCategory);
+                    } catch (ParserConfigurationException | SAXException | TransformerException | IOException err) {
+                        logger.error(err);
+                    }
+                }
+            }
+        });
+
+
+        cancelButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                newShell.close();
+            }
+        });
+
+        Display.getDefault().addFilter(SWT.KeyDown, event -> {
+            if ((event.stateMask & SWT.CTRL) != 0 && event.keyCode == 's') {
+                Control[] children = mainFormBodyComposite.getChildren();
+                String bookTitle = "";
+                String bookAuthor = "";
+                String bookCategory = "";
+                for (Control control : children) {
+                    if (control instanceof Text) {
+                        Text textField = (Text) control;
+                        String text = textField.getText();
+
+                        if(bookCategory.isEmpty()){
+                            bookCategory = text;
+                            continue;
+                        }
+                        if(bookAuthor.isEmpty()){
+                            bookAuthor = text;
+                            continue;
+                        }
+
+                        if(bookTitle.isEmpty()){
+                            bookTitle = text;
+                        }
+                    }
+                }
+
+                try {
+                    saveBookToXMLFile(bookTitle, bookAuthor, bookCategory);
+                } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
+                    throw new RuntimeException(e);
+                }
+                event.doit = false;
+            }
+
+            if ((event.stateMask & SWT.CTRL) != 0 && event.keyCode == 'z') {
+                addCategoryNameText.setText("");
+                addAuthorNameText.setText("");
+                addBookNameText.setText("");
             }
         });
 
