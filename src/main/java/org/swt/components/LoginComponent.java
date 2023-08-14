@@ -6,13 +6,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.swt.util.Language;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.Locale;
 
 public class LoginComponent {
     private final Composite composite;
@@ -20,42 +23,57 @@ public class LoginComponent {
     private static final String VALID_USERNAME = "abc";
     private static final String VALID_PASSWORD = "123";
     private final Logger logger = LogManager.getLogger();
+    private Label title;
+    private GridData titleGridData;
+    private Label usernameLabel;
+    private Label passwordLabel;
+    private Button loginButton;
+
     public LoginComponent(Shell shell) {
         this.composite = new Composite(shell, SWT.NONE);
         this.shell = shell;
     }
 
-    public void createLoginComponent(){
+    public void createLoginComponent(Locale currentLocale) {
         composite.setLayout(new GridLayout(1, false));
-        composite.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,true,false));
+        composite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
-        Label title = new Label(composite, SWT.NONE);
+        title = new Label(composite, SWT.NONE);
         title.setText("Login");
-        Font font = new Font(composite.getDisplay(), "Helvetica", 20,SWT.BOLD);
+        Font font = new Font(composite.getDisplay(), "Helvetica", 20, SWT.BOLD);
         title.setFont(font);
+        titleGridData = new GridData(SWT.CENTER, SWT.CENTER, true, false);
         title.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
         Composite loginComposite = new Composite(composite, SWT.NONE);
         loginComposite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
         loginComposite.setLayout(new GridLayout(2, false));
 
-        Label usernameLabel = new Label(loginComposite, SWT.NONE);
+        usernameLabel = new Label(loginComposite, SWT.NONE);
         usernameLabel.setText("Username:");
         usernameLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
         Text usernameText = new Text(loginComposite, SWT.SINGLE | SWT.BORDER);
         usernameText.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
-        Label passwordLabel = new Label(loginComposite, SWT.NONE);
+        passwordLabel = new Label(loginComposite, SWT.NONE);
         passwordLabel.setText("Password:");
         passwordLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
         Text passwordText = new Text(loginComposite, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
         passwordText.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
-        Button loginButton = new Button(composite, SWT.PUSH);
+        loginButton = new Button(composite, SWT.PUSH);
         loginButton.setText("Login");
         loginButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 1));
+
+
+        if(!currentLocale.getLanguage().equals("de")){
+            title.setText(Language.getTranslatedText("login"));
+            usernameLabel.setText(Language.getTranslatedText("username"));
+            passwordLabel.setText(Language.getTranslatedText("password"));
+            loginButton.setText(Language.getTranslatedText("login"));
+        }
 
         loginButton.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -64,7 +82,7 @@ public class LoginComponent {
                 String password = passwordText.getText();
 
                 if (username.equals(VALID_USERNAME) && password.equals(VALID_PASSWORD)) {
-                    logger.info("{} logged in successfully!",username);
+                    logger.info("{} logged in successfully!", username);
                     composite.dispose();
                     HomeComponent homeComponent = new HomeComponent(shell, logger);
                     try {
@@ -86,5 +104,27 @@ public class LoginComponent {
                 }
             }
         });
+    }
+
+    public void updateLanguage(Locale newLocale) {
+        Locale.setDefault(newLocale);
+        title.setText(Language.getTranslatedText("login"));
+        usernameLabel.setText(Language.getTranslatedText("username"));
+        passwordLabel.setText(Language.getTranslatedText("password"));
+        loginButton.setText(Language.getTranslatedText("login"));
+
+        adjustLabelWidth(title);
+    }
+
+    private void adjustLabelWidth(Label label) {
+        GC gc = new GC(label);
+        int textWidth = gc.textExtent(label.getText()).x;
+        gc.dispose();
+
+        GridData layoutData = (GridData) label.getLayoutData();
+        layoutData.widthHint = textWidth;
+        label.setLayoutData(layoutData);
+
+        shell.layout();
     }
 }

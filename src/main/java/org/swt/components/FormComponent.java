@@ -2,8 +2,6 @@ package org.swt.components;
 
 import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -152,17 +150,27 @@ public class FormComponent {
                             bookAuthor = text;
                             continue;
                         }
-
                         if(bookTitle.isEmpty()){
                             bookTitle = text;
                         }
                     }
                 }
 
-                try {
-                    saveBookToXMLFile(bookTitle, bookAuthor, bookCategory);
-                } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
-                    throw new RuntimeException(e);
+                if(bookTitle.isEmpty()){
+                    messageLabel.setText("The title of the book cannot be empty!");
+                    messageLabel.setForeground(new Color(255, 0, 0));
+                }else if(bookAuthor.isEmpty()){
+                    messageLabel.setText("The author of the book cannot be empty!");
+                    messageLabel.setForeground(new Color(255, 0, 0));
+                }else if(bookCategory.isEmpty()){
+                    messageLabel.setText("The category of the book cannot be empty!");
+                    messageLabel.setForeground(new Color(255, 0, 0));
+                }else{
+                    try {
+                        saveBookToXMLFile(bookTitle, bookAuthor, bookCategory);
+                    } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 event.doit = false;
             }
