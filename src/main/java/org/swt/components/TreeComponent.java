@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.List;
 
 public class TreeComponent {
-//    private final Composite treeComposite;
     private BodyComponent bodyComponent;
     private final Map<String, TreeItem> categoryMap = new HashMap<>();
     private final Map<String, TreeItem> authorMap = new HashMap<>();
@@ -34,7 +33,6 @@ public class TreeComponent {
     private final Logger logger;
     private Tree tree;
     public TreeComponent(Composite homeComposite, Logger logger) {
-//        this.treeComposite = new Composite(homeComposite, SWT.NONE);
         this.homeComposite = homeComposite;
         this.logger = logger;
     }
@@ -46,9 +44,6 @@ public class TreeComponent {
         baseTreeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         this.tree = new Tree(baseTreeComposite, SWT.NONE);
-//        treeComposite.setLayout(new GridLayout(1, false));
-//        treeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
-//        treeComposite.setBackground(new Color(255,255,255));
 
         GridData treeCompositeData = new GridData(SWT.FILL, SWT.FILL, false, true);
         treeCompositeData.widthHint = 300;
@@ -232,10 +227,5 @@ public class TreeComponent {
         BookReviewComponent bookReviewComponent = new BookReviewComponent(tabFolder, logger);
         titleTabItem.setControl(bookReviewComponent.createBookReviewComponent(bookTitle, bookNodes));
         tabFolder.setSelection(titleTabItem);
-    }
-
-    public void disposeTreeComponent(){
-        tabFolder.dispose();
-        tree.dispose();
     }
 }

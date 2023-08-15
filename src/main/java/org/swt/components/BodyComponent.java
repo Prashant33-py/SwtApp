@@ -23,12 +23,15 @@ public class BodyComponent {
     public Table table;
     public Composite tableComposite;
     public TabFolder tabFolder;
+    private final TabItem activeTab;
     private final Logger logger;
     private TableItem rightClickedTableItem;
+
     public BodyComponent(Composite tabFolder, Logger logger) {
         this.tabFolder = (TabFolder) tabFolder;
         this.logger = logger;
         this.bodyComposite = new Composite(tabFolder, SWT.NONE);
+        this.activeTab = null;
         bodyComposite.setLayout(new GridLayout(1,false));
         GridData bodyCompositeData = new GridData(SWT.FILL, SWT.FILL, true, true);
         bodyComposite.setLayoutData(bodyCompositeData);
@@ -94,22 +97,11 @@ public class BodyComponent {
         MenuItem cancel = new MenuItem(contextMenu, SWT.PUSH);
         cancel.setText("Cancel");
 
-        table.setMenu(contextMenu);
-
-        table.addMenuDetectListener(e -> {
-            Point mouseLocation = table.toDisplay(e.x-358,e.y-165);
-            Point selectedTableItemLocation = table.toControl(e.x,e.y);
-            rightClickedTableItem = table.getItem(selectedTableItemLocation);
-            contextMenu.setVisible(true);
-        });
-
         editBook.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 FormComponent formComponent = new FormComponent(bodyComposite.getDisplay(), logger);
-                System.out.println(rightClickedTableItem.getText(1));
-                System.out.println();
-                formComponent.editBookForm();
+                formComponent.createEditBookForm(rightClickedTableItem, children);
             }
         });
 
@@ -125,6 +117,13 @@ public class BodyComponent {
             public void mouseDoubleClick(MouseEvent e) {
                 if(childCategoryTag.equals("author")){
                     updateAuthorTable(e, children);
+
+                    table.addMenuDetectListener(event -> {
+                        Point selectedTableItemLocation = table.toControl(event.x,event.y);
+                        rightClickedTableItem = table.getItem(selectedTableItemLocation);
+                        table.setMenu(contextMenu);
+                        contextMenu.setVisible(true);
+                    });
                 }
                 else{
                     System.out.println("Not author");
@@ -143,7 +142,6 @@ public class BodyComponent {
     }
 
     public void updateAuthorTable(MouseEvent e, List<TreeItem> children) {
-        String selectedItemText;
         TabItem authorTabItem;
         Point point = new Point(e.x, e.y);
         TableItem item = table.getItem(point);
@@ -156,15 +154,14 @@ public class BodyComponent {
         }
 
         if (columnIndex != -1) {
-            selectedItemText = item.getText(columnIndex);
+            String criteriaName = item.getText(columnIndex);
             for(TreeItem treeItem : children) {
-                if (treeItem.getText().equals(selectedItemText)) {
+                if (treeItem.getText().equals(criteriaName)) {
                     authorTabItem = tabFolder.getItem(1);
                     List<TreeItem> treeItemChildren = Arrays.asList(treeItem.getItems());
                     tableComposite.dispose();
 
                     String childCategoryTag = (String) treeItem.getItem(0).getData("tag");
-                    String criteriaName = selectedItemText;
                     String currentCategoryTag = (String) treeItem.getItem(0).getParentItem().getData("tag");
 
                     authorTabItem.setControl(createTable(treeItemChildren, childCategoryTag, criteriaName, currentCategoryTag));

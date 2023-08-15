@@ -24,10 +24,10 @@ public class LoginComponent {
     private static final String VALID_PASSWORD = "123";
     private final Logger logger = LogManager.getLogger();
     private Label title;
-    private GridData titleGridData;
     private Label usernameLabel;
     private Label passwordLabel;
     private Button loginButton;
+    private Locale newLocale;
 
     public LoginComponent(Shell shell) {
         this.composite = new Composite(shell, SWT.NONE);
@@ -35,6 +35,20 @@ public class LoginComponent {
     }
 
     public void createLoginComponent(Locale currentLocale) {
+
+        Composite languageComposite = new Composite(composite, SWT.END);
+        languageComposite.setLayout(new GridLayout(3, false));
+        languageComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false));
+
+        Label languageLabel = new Label(languageComposite, SWT.NONE);
+        languageLabel.setText("Language");
+
+        Button englishLanguageButton = new Button(languageComposite, SWT.RADIO);
+        englishLanguageButton.setText("en");
+
+        Button germanLanguageButton = new Button(languageComposite, SWT.RADIO);
+        germanLanguageButton.setText("de");
+
         composite.setLayout(new GridLayout(1, false));
         composite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
@@ -42,8 +56,8 @@ public class LoginComponent {
         title.setText("Login");
         Font font = new Font(composite.getDisplay(), "Helvetica", 20, SWT.BOLD);
         title.setFont(font);
-        titleGridData = new GridData(SWT.CENTER, SWT.CENTER, true, false);
-        title.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        GridData titleGridData = new GridData(SWT.CENTER, SWT.CENTER, true, false);
+        title.setLayoutData(titleGridData);
 
         Composite loginComposite = new Composite(composite, SWT.NONE);
         loginComposite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
@@ -67,6 +81,29 @@ public class LoginComponent {
         loginButton.setText("Login");
         loginButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 1));
 
+        englishLanguageButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                newLocale = new Locale("en", "US");
+                Locale.setDefault(newLocale);
+                languageLabel.setText(Language.getTranslatedText("lang"));
+                shell.setText(Language.getTranslatedText("shellTitle"));
+
+                updateLanguage(newLocale);
+            }
+        });
+
+        germanLanguageButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                newLocale = new Locale("de", "DE");
+                Locale.setDefault(newLocale);
+                languageLabel.setText(Language.getTranslatedText("lang"));
+                shell.setText(Language.getTranslatedText("shellTitle"));
+
+                updateLanguage(newLocale);
+            }
+        });
 
         if(!currentLocale.getLanguage().equals("de")){
             title.setText(Language.getTranslatedText("login"));
@@ -87,7 +124,7 @@ public class LoginComponent {
                     HomeComponent homeComponent = new HomeComponent(shell, logger);
                     try {
                         try {
-                            homeComponent.createHomeComponent();
+                            homeComponent.createHomeComponent(currentLocale);
                         } catch (IOException | SAXException ex) {
                             throw new RuntimeException(ex);
                         }
@@ -96,10 +133,15 @@ public class LoginComponent {
                     }
                     shell.layout();
                 } else {
-                    logger.error("Unable to login because of incorrect password.");
+                    logger.error("Unable to login because of incorrect username or password.");
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-                    messageBox.setText("Error");
-                    messageBox.setMessage("Invalid username or password");
+                    if(newLocale.getLanguage().equals("de")){
+                        messageBox.setText(Language.getTranslatedText("error"));
+                        messageBox.setMessage(Language.getTranslatedText("errorMsg"));
+                    }else{
+                        messageBox.setText(Language.getTranslatedText("error"));
+                        messageBox.setMessage(Language.getTranslatedText("errorMsg"));
+                    }
                     messageBox.open();
                 }
             }
@@ -112,7 +154,6 @@ public class LoginComponent {
         usernameLabel.setText(Language.getTranslatedText("username"));
         passwordLabel.setText(Language.getTranslatedText("password"));
         loginButton.setText(Language.getTranslatedText("login"));
-
         adjustLabelWidth(title);
     }
 

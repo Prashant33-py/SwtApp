@@ -160,14 +160,14 @@
         <author>Sophia Miller</author>
         <title>Unbreakable Spirit</title>
     </book>
-<book>
-<category>History</category>
-<author>Michael Turner</author>
-<title>The Renaissance Era</title>
-</book>
-<book>
-<category>Fiction</category>
-<author>Emily Green</author>
-<title>The Mysterious Puzzle</title>
-</book>
+    <book>
+        <category>History</category>
+        <author>Michael Turner</author>
+        <title>The Renaissance Era</title>
+    </book>
+    <book>
+        <category>Fiction</category>
+        <author>Emily Green</author>
+        <title>The Mysterious Puzzle</title>
+    </book>
 </library>

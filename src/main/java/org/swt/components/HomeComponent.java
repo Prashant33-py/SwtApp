@@ -8,6 +8,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.swt.util.Language;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -17,7 +18,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Locale;
 
 public class HomeComponent {
     private final Shell shell;
@@ -31,7 +32,7 @@ public class HomeComponent {
         this.logger = logger;
     }
 
-    public void createHomeComponent() throws ParserConfigurationException, IOException, SAXException {
+    public void createHomeComponent(Locale currentLocale) throws ParserConfigurationException, IOException, SAXException {
         GridData compositeData = new GridData(SWT.CENTER, SWT.FILL, true, false);
         composite.setLayout(new GridLayout(1, false));
         composite.setLayoutData(compositeData);
@@ -60,10 +61,7 @@ public class HomeComponent {
         // Create the "Add" MenuItem
         MenuItem addItem = new MenuItem(fileMenu, SWT.PUSH);
         addItem.setText("&Add");
-
-        // Create the "Edit" MenuItem
-        MenuItem editItem = new MenuItem(fileMenu, SWT.PUSH);
-        editItem.setText("&Edit");
+        addItem.setText("&Add");
 
         // Create the "Cancel" MenuItem
         MenuItem cancelItem = new MenuItem(fileMenu, SWT.PUSH);
@@ -79,6 +77,10 @@ public class HomeComponent {
         TreeComponent treeComponent = new TreeComponent(homeComposite, logger);
         treeComponent.createTreeComponent(bookNodes);
 
+        if(currentLocale.getLanguage().equals("de")){
+            shell.setText(Language.getTranslatedText("homeShellTitle"));
+        }
+
         addItem.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -87,19 +89,11 @@ public class HomeComponent {
                 try {
                     NodeList newBookNodes = createNodeList();
                     TreeComponent newTreeComponent = new TreeComponent(homeComposite, logger);
-                    Composite newTreeComposite = newTreeComponent.createTreeComponent(newBookNodes);
+                    newTreeComponent.createTreeComponent(newBookNodes);
 
-                    System.out.println(Arrays.toString(newTreeComposite.getChildren()));
                 } catch (ParserConfigurationException | IOException | SAXException ex) {
                     throw new RuntimeException(ex);
                 }
-            }
-        });
-
-        editItem.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                System.out.println("Edit option selected");
             }
         });
 
