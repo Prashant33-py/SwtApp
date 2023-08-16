@@ -8,6 +8,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.swt.model.Users;
 import org.swt.util.Language;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -23,8 +24,8 @@ import java.util.Locale;
 public class HomeComponent {
     private final Shell shell;
     private final Composite composite;
-    private FormComponent formComponent;
     private final Logger logger;
+    private final Users currentUser = LoginComponent.currentUser;
 
     public HomeComponent(Shell shell, Logger logger) {
         this.composite = new Composite(shell, SWT.NONE);
@@ -46,31 +47,54 @@ public class HomeComponent {
         welcomeLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
 
         NodeList bookNodes = createNodeList();
-        /*
-          Creation of menu bar
-         */
-        Menu menuBar = new Menu(shell, SWT.BAR);
-        shell.setMenuBar(menuBar);
-
-        // Create the "File" menu
-        MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
-        fileMenuHeader.setText("&File");
-        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
-        fileMenuHeader.setMenu(fileMenu);
-
-        // Create the "Add" MenuItem
-        MenuItem addItem = new MenuItem(fileMenu, SWT.PUSH);
-        addItem.setText("&Add");
-        addItem.setText("&Add");
-
-        // Create the "Cancel" MenuItem
-        MenuItem cancelItem = new MenuItem(fileMenu, SWT.PUSH);
-        cancelItem.setText("&Cancel");
 
         Composite homeComposite = new Composite(shell, SWT.NONE);
         homeComposite.setLayout(new GridLayout(1, false));
         homeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+        if(currentUser.getRole().equals("admin")){
+            /*
+                Creation of menu bar
+            */
+            Menu menuBar = new Menu(shell, SWT.BAR);
+            shell.setMenuBar(menuBar);
+
+            // Create the "File" menu
+            MenuItem fileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
+            fileMenuHeader.setText("&File");
+            Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+            fileMenuHeader.setMenu(fileMenu);
+
+            // Create the "Add Book" MenuItem
+            MenuItem addItem = new MenuItem(fileMenu, SWT.PUSH);
+            addItem.setText("&Add Book");
+
+            // Create the "Cancel" MenuItem
+            MenuItem cancelItem = new MenuItem(fileMenu, SWT.PUSH);
+            cancelItem.setText("&Cancel");
+            addItem.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    FormComponent formComponent = new FormComponent(shell.getDisplay(), logger);
+                    formComponent.createAddBookForm();
+                    try {
+                        NodeList newBookNodes = createNodeList();
+                        TreeComponent newTreeComponent = new TreeComponent(homeComposite, logger);
+                        newTreeComponent.createTreeComponent(newBookNodes);
+                    } catch (ParserConfigurationException | IOException | SAXException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            });
+
+            cancelItem.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    System.out.println("Cancel option selected");
+                    fileMenu.dispose();
+                }
+            });
+        }
         /*
           Creation of Tree Component
          */
@@ -80,34 +104,10 @@ public class HomeComponent {
         if(currentLocale.getLanguage().equals("de")){
             shell.setText(Language.getTranslatedText("homeShellTitle"));
         }
-
-        addItem.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                formComponent = new FormComponent(shell.getDisplay(), logger);
-                formComponent.createAddBookForm();
-                try {
-                    NodeList newBookNodes = createNodeList();
-                    TreeComponent newTreeComponent = new TreeComponent(homeComposite, logger);
-                    newTreeComponent.createTreeComponent(newBookNodes);
-
-                } catch (ParserConfigurationException | IOException | SAXException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        });
-
-        cancelItem.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                System.out.println("Cancel option selected");
-                fileMenu.dispose();
-            }
-        });
         homeComposite.layout();
     }
 
-    public NodeList createNodeList() throws ParserConfigurationException, IOException, SAXException {
+    public static NodeList createNodeList() throws ParserConfigurationException, IOException, SAXException {
         File xmlFile = new File("./src/main/java/org/swt/data/Books.xml");
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();

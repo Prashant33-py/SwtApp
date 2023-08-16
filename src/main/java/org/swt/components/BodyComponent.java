@@ -12,43 +12,50 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.swt.model.Users;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class BodyComponent {
+    private final Logger logger;
+    private final Composite homeComposite;
+    private final Users currentUser = LoginComponent.currentUser;
     public Composite bodyComposite;
     public Table table;
     public Composite tableComposite;
     public TabFolder tabFolder;
-    private final TabItem activeTab;
-    private final Logger logger;
     private TableItem rightClickedTableItem;
+    private Menu contextMenu;
 
-    public BodyComponent(Composite tabFolder, Logger logger) {
+    public BodyComponent(Composite tabFolder, Logger logger, Composite homeComposite) {
         this.tabFolder = (TabFolder) tabFolder;
         this.logger = logger;
         this.bodyComposite = new Composite(tabFolder, SWT.NONE);
-        this.activeTab = null;
-        bodyComposite.setLayout(new GridLayout(1,false));
+        this.homeComposite = homeComposite;
+        bodyComposite.setLayout(new GridLayout(1, false));
         GridData bodyCompositeData = new GridData(SWT.FILL, SWT.FILL, true, true);
         bodyComposite.setLayoutData(bodyCompositeData);
-        bodyComposite.setBackground(new Color(255,255,255));
+        bodyComposite.setBackground(new Color(255, 255, 255));
     }
 
     public Composite createTable(List<TreeItem> children, String childCategoryTag, String criteriaName, String currentCategoryTag) {
         tableComposite = new Composite(bodyComposite, SWT.NONE);
-        tableComposite.setLayout(new GridLayout(1,false));
+        tableComposite.setLayout(new GridLayout(1, false));
         tableComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        tableComposite.setBackground(new Color(255,255,255));
+        tableComposite.setBackground(new Color(255, 255, 255));
 
         Label titleLabel = new Label(tableComposite, SWT.NONE);
         titleLabel.setText(criteriaName);
         titleLabel.setFont(new Font(bodyComposite.getDisplay(), "Helvetica", 16, SWT.BOLD));
         titleLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-        titleLabel.setBackground(new Color(255,255,255));
+        titleLabel.setBackground(new Color(255, 255, 255));
 
         table = new Table(tableComposite, SWT.NONE | SWT.BORDER | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
@@ -62,26 +69,26 @@ public class BodyComponent {
         columnName.setText(capitalize(childCategoryTag));
         columnName.setWidth(250);
 
-        if(currentCategoryTag.equals("category")){
+        if (currentCategoryTag.equals("category")) {
             TableColumn authorName = new TableColumn(table, SWT.BORDER);
             authorName.setText("Title");
             authorName.setWidth(400);
         }
 
-        for(int i = 0; i < children.size(); i++) {
+        for (int i = 0; i < children.size(); i++) {
             TableItem tableItem = new TableItem(table, SWT.BORDER);
-            tableItem.setText(0, String.format("%d", i+1));
+            tableItem.setText(0, String.format("%d", i + 1));
             tableItem.setText(1, children.get(i).getText());
-            if(currentCategoryTag.equals("category")){
+            if (currentCategoryTag.equals("category")) {
                 columnName.setWidth(150);
                 Map<String, String> authorBookMap = new HashMap<>();
                 String books = "";
-                for(TreeItem book: children.get(i).getItems()){
+                for (TreeItem book : children.get(i).getItems()) {
                     String key = book.getParentItem().getText();
                     String value = book.getText();
-                    if(authorBookMap.containsKey(key)){
+                    if (authorBookMap.containsKey(key)) {
                         books = books + ", " + value;
-                    }else{
+                    } else {
                         books = value;
                     }
                     authorBookMap.put(key, books);
@@ -90,7 +97,7 @@ public class BodyComponent {
             }
         }
 
-        Menu contextMenu = new Menu(table);
+        contextMenu = new Menu(table);
 
         MenuItem editBook = new MenuItem(contextMenu, SWT.PUSH);
         editBook.setText("Edit Book");
@@ -102,6 +109,14 @@ public class BodyComponent {
             public void widgetSelected(SelectionEvent e) {
                 FormComponent formComponent = new FormComponent(bodyComposite.getDisplay(), logger);
                 formComponent.createEditBookForm(rightClickedTableItem, children);
+                NodeList newNodeList;
+                try {
+                    newNodeList = HomeComponent.createNodeList();
+                } catch (ParserConfigurationException | IOException | SAXException ex) {
+                    throw new RuntimeException(ex);
+                }
+                TreeComponent updatedTreeComponent = new TreeComponent(homeComposite, logger);
+                updatedTreeComponent.createTreeComponent(newNodeList);
             }
         });
 
@@ -115,29 +130,30 @@ public class BodyComponent {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDoubleClick(MouseEvent e) {
-                if(childCategoryTag.equals("author")){
+                if (childCategoryTag.equals("author")) {
                     updateAuthorTable(e, children);
 
-                    table.addMenuDetectListener(event -> {
-                        Point selectedTableItemLocation = table.toControl(event.x,event.y);
-                        rightClickedTableItem = table.getItem(selectedTableItemLocation);
-                        table.setMenu(contextMenu);
-                        contextMenu.setVisible(true);
-                    });
-                }
-                else{
+                    if(currentUser.getRole().equals("admin")) {
+                        table.addMenuDetectListener(event -> {
+                            Point selectedTableItemLocation = table.toControl(event.x, event.y);
+                            rightClickedTableItem = table.getItem(selectedTableItemLocation);
+                            table.setMenu(contextMenu);
+                            contextMenu.setVisible(true);
+                        });
+                    }
+                } else {
                     System.out.println("Not author");
                 }
             }
         });
-        if(bodyComposite.getChildren().length > 1){
+        if (bodyComposite.getChildren().length > 1) {
             bodyComposite.getChildren()[0].dispose();
         }
         bodyComposite.layout();
         return bodyComposite;
     }
 
-    public String capitalize(String title){
+    public String capitalize(String title) {
         return title.toUpperCase().charAt(0) + title.substring(1);
     }
 
@@ -155,7 +171,7 @@ public class BodyComponent {
 
         if (columnIndex != -1) {
             String criteriaName = item.getText(columnIndex);
-            for(TreeItem treeItem : children) {
+            for (TreeItem treeItem : children) {
                 if (treeItem.getText().equals(criteriaName)) {
                     authorTabItem = tabFolder.getItem(1);
                     List<TreeItem> treeItemChildren = Arrays.asList(treeItem.getItems());

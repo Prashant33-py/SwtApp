@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 
 public class Language {
     public static String getTranslatedText(String key) {
-        Locale currentLocale = Locale.getDefault(); // Get the user's preferred locale
+        Locale currentLocale = Locale.getDefault();
 
         ResourceBundle resourceBundle = ResourceBundle.getBundle("i18n.messages", currentLocale);
 

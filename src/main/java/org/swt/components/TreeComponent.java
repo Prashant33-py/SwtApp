@@ -167,7 +167,7 @@ public class TreeComponent {
                 TreeItem selectedItem = (TreeItem) e.item;
                 selectedItemText = selectedItem.getText();
 
-                bodyComponent = new BodyComponent(tabFolder, logger);
+                bodyComponent = new BodyComponent(tabFolder, logger, homeComposite);
 
                 if (selectedItem.getItemCount() > 0) {
                     if(!children.isEmpty()) {
@@ -197,8 +197,8 @@ public class TreeComponent {
         tabFolder.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                TabItem newAuthorTabItem = (TabItem) e.item;
-                if(newAuthorTabItem.getText().equals("Category")){
+                TabItem newTabItem = (TabItem) e.item;
+                if(newTabItem.getText().equals("Category")){
                     authorTabItem.setControl(authorComposite);
                     categoryTabItem.setControl(bodyComponent.createTable(children, (String) authorItem.getData("tag"), selectedItemText, (String) categoryItem.getData("tag")));
                 }

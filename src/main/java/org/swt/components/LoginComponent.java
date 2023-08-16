@@ -10,19 +10,21 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.swt.model.Users;
 import org.swt.util.Language;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.Locale;
+import java.util.*;
+import java.util.List;
 
 public class LoginComponent {
     private final Composite composite;
     private final Shell shell;
-    private static final String VALID_USERNAME = "abc";
-    private static final String VALID_PASSWORD = "123";
     private final Logger logger = LogManager.getLogger();
+    public final static List<Users> users = new ArrayList<>();
+    public static Users currentUser;
     private Label title;
     private Label usernameLabel;
     private Label passwordLabel;
@@ -32,10 +34,25 @@ public class LoginComponent {
     public LoginComponent(Shell shell) {
         this.composite = new Composite(shell, SWT.NONE);
         this.shell = shell;
+        Users user1 = new Users();
+        user1.setUserName("admin");
+        user1.setPassword("admin123");
+        user1.setRole("admin");
+
+        Users user2 = new Users();
+        user2.setUserName("bot1");
+        user2.setPassword("bot135");
+        user2.setRole("bot");
+
+        Users user3 = new Users();
+        user3.setUserName("bot2");
+        user3.setPassword("bot246");
+        user3.setRole("bot");
+
+        users.addAll(Arrays.asList(user1, user2, user3));
     }
 
     public void createLoginComponent(Locale currentLocale) {
-
         Composite languageComposite = new Composite(composite, SWT.END);
         languageComposite.setLayout(new GridLayout(3, false));
         languageComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false));
@@ -45,6 +62,7 @@ public class LoginComponent {
 
         Button englishLanguageButton = new Button(languageComposite, SWT.RADIO);
         englishLanguageButton.setText("en");
+        englishLanguageButton.setFocus();
 
         Button germanLanguageButton = new Button(languageComposite, SWT.RADIO);
         germanLanguageButton.setText("de");
@@ -117,31 +135,41 @@ public class LoginComponent {
             public void widgetSelected(SelectionEvent e) {
                 String username = usernameText.getText();
                 String password = passwordText.getText();
+                boolean userFound = false;
 
-                if (username.equals(VALID_USERNAME) && password.equals(VALID_PASSWORD)) {
-                    logger.info("{} logged in successfully!", username);
-                    composite.dispose();
-                    HomeComponent homeComponent = new HomeComponent(shell, logger);
-                    try {
+                for(Users user : users) {
+                    if(user.getUserName().equals(username)){
+                        userFound = true;
+                    }
+                    if (username.equals(user.getUserName()) && password.equals(user.getPassword())) {
+                        currentUser = user;
+                        logger.info("{} logged in successfully!", username);
+                        composite.dispose();
+                        HomeComponent homeComponent = new HomeComponent(shell, logger);
                         try {
-                            homeComponent.createHomeComponent(currentLocale);
-                        } catch (IOException | SAXException ex) {
+                            try {
+                                homeComponent.createHomeComponent(currentLocale);
+                            } catch (IOException | SAXException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        } catch (ParserConfigurationException ex) {
                             throw new RuntimeException(ex);
                         }
-                    } catch (ParserConfigurationException ex) {
-                        throw new RuntimeException(ex);
+                        shell.layout();
                     }
-                    shell.layout();
-                } else {
-                    logger.error("Unable to login because of incorrect username or password.");
+                    else if(username.equals(user.getUserName()) && !password.equals(user.getPassword())){
+                        logger.error("Unable to login because of incorrect username or password.");
+                        MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
+                        messageBox.setText(Language.getTranslatedText("error"));
+                        messageBox.setMessage(Language.getTranslatedText("errorMsg"));
+                        messageBox.open();
+                    }
+                }
+                if(!userFound){
+                    logger.error("User with the name " + username + " does not exist!");
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
-                    if(newLocale.getLanguage().equals("de")){
-                        messageBox.setText(Language.getTranslatedText("error"));
-                        messageBox.setMessage(Language.getTranslatedText("errorMsg"));
-                    }else{
-                        messageBox.setText(Language.getTranslatedText("error"));
-                        messageBox.setMessage(Language.getTranslatedText("errorMsg"));
-                    }
+                    messageBox.setText(Language.getTranslatedText("error"));
+                    messageBox.setMessage(Language.getTranslatedText("noUserMsg"));
                     messageBox.open();
                 }
             }
