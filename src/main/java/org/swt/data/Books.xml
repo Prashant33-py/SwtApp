@@ -102,7 +102,7 @@
     </book>
     <book>
         <category>Biography</category>
-        <author>Lucy Parker</author>
+        <author>Lucia Parker</author>
         <title>Inspirational Leaders</title>
     </book>
     <book>
@@ -114,5 +114,10 @@
         <category>Fiction</category>
         <author>Susan Green</author>
         <title>The Enchanted Forest</title>
+    </book>
+    <book>
+        <category>Technology</category>
+        <author>Anna Lee</author>
+        <title>Mastering Machine Learning</title>
     </book>
 </library>

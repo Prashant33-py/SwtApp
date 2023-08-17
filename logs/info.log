@@ -667,3 +667,11 @@
 2023-08-16 18:45:42.120 [main] INFO  org.swt.components.LoginComponent - admin logged in successfully!
 2023-08-16 18:45:56.543 [main] ERROR org.swt.components.LoginComponent - Unable to login because of incorrect username or password.
 2023-08-16 18:46:00.825 [main] INFO  org.swt.components.LoginComponent - admin logged in successfully!
+2023-08-17 10:30:38.873 [main] ERROR org.swt.components.LoginComponent - Unable to login because of incorrect username or password.
+2023-08-17 10:30:47.423 [main] ERROR org.swt.components.LoginComponent - User with the name abc does not exist!
+2023-08-17 10:30:56.052 [main] INFO  org.swt.components.LoginComponent - admin logged in successfully!
+2023-08-17 10:45:44.607 [main] INFO  org.swt.components.LoginComponent - admin logged in successfully!
+2023-08-17 10:45:51.059 [main] ERROR org.swt.components.LoginComponent - Save failed! One of the input fields is empty!
+2023-08-17 10:57:50.836 [main] INFO  org.swt.components.LoginComponent - admin logged in successfully!
+2023-08-17 10:58:12.500 [main] INFO  org.swt.components.LoginComponent - Mastering Machine Learning has been added to the library successfully!
+2023-08-17 10:58:32.644 [main] INFO  org.swt.components.LoginComponent - Inspirational Leaders has been updated in the library successfully!

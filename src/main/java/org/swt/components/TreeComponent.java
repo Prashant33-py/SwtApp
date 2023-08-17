@@ -31,19 +31,19 @@ public class TreeComponent {
     private String selectedItemText;
     private NodeList bookNodes;
     private final Logger logger;
-    private Tree tree;
+
     public TreeComponent(Composite homeComposite, Logger logger) {
         this.homeComposite = homeComposite;
         this.logger = logger;
     }
 
-    public Composite createTreeComponent(NodeList bookNodes) {
+    public void createTreeComponent(NodeList bookNodes) {
 
         Composite baseTreeComposite = new Composite(homeComposite, SWT.NONE);
         baseTreeComposite.setLayout(new GridLayout(2, false));
         baseTreeComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        this.tree = new Tree(baseTreeComposite, SWT.NONE);
+        Tree tree = new Tree(baseTreeComposite, SWT.NONE);
 
         GridData treeCompositeData = new GridData(SWT.FILL, SWT.FILL, false, true);
         treeCompositeData.widthHint = 300;
@@ -210,7 +210,6 @@ public class TreeComponent {
             homeComposite.getChildren()[0].dispose();
         }
         homeComposite.layout(true);
-        return homeComposite;
     }
 
     public void handleCategoryItemClick(List<TreeItem> children, String criteriaName, TabItem categoryTabItem){
@@ -224,7 +223,7 @@ public class TreeComponent {
     }
 
     public void handleTitleItemClick(String bookTitle, TabItem titleTabItem) throws ParserConfigurationException, IOException, SAXException {
-        BookReviewComponent bookReviewComponent = new BookReviewComponent(tabFolder, logger);
+        BookReviewComponent bookReviewComponent = new BookReviewComponent(tabFolder);
         titleTabItem.setControl(bookReviewComponent.createBookReviewComponent(bookTitle, bookNodes));
         tabFolder.setSelection(titleTabItem);
     }

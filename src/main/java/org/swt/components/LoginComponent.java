@@ -30,6 +30,7 @@ public class LoginComponent {
     private Label passwordLabel;
     private Button loginButton;
     private Locale newLocale;
+    private Button showHideButton;
 
     public LoginComponent(Shell shell) {
         this.composite = new Composite(shell, SWT.NONE);
@@ -55,7 +56,7 @@ public class LoginComponent {
     public void createLoginComponent(Locale currentLocale) {
         Composite languageComposite = new Composite(composite, SWT.END);
         languageComposite.setLayout(new GridLayout(3, false));
-        languageComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false));
+        languageComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
         Label languageLabel = new Label(languageComposite, SWT.NONE);
         languageLabel.setText("Language");
@@ -94,6 +95,25 @@ public class LoginComponent {
 
         Text passwordText = new Text(loginComposite, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
         passwordText.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false));
+        passwordText.setEchoChar('*');
+
+        showHideButton = new Button(composite, SWT.CHECK);
+        showHideButton.setText("Show Password");
+        showHideButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 2, 1));
+
+        // Add a SelectionListener to the show/hide button
+        showHideButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                // Toggle the password visibility based on the button state
+                boolean showPassword = showHideButton.getSelection();
+                if (showPassword) {
+                    passwordText.setEchoChar('\0'); // Show characters
+                } else {
+                    passwordText.setEchoChar('*');  // Hide characters
+                }
+            }
+        });
 
         loginButton = new Button(composite, SWT.PUSH);
         loginButton.setText("Login");
@@ -123,7 +143,7 @@ public class LoginComponent {
             }
         });
 
-        if(!currentLocale.getLanguage().equals("de")){
+        if (!currentLocale.getLanguage().equals("de")) {
             title.setText(Language.getTranslatedText("login"));
             usernameLabel.setText(Language.getTranslatedText("username"));
             passwordLabel.setText(Language.getTranslatedText("password"));
@@ -137,8 +157,8 @@ public class LoginComponent {
                 String password = passwordText.getText();
                 boolean userFound = false;
 
-                for(Users user : users) {
-                    if(user.getUserName().equals(username)){
+                for (Users user : users) {
+                    if (user.getUserName().equals(username)) {
                         userFound = true;
                     }
                     if (username.equals(user.getUserName()) && password.equals(user.getPassword())) {
@@ -156,8 +176,7 @@ public class LoginComponent {
                             throw new RuntimeException(ex);
                         }
                         shell.layout();
-                    }
-                    else if(username.equals(user.getUserName()) && !password.equals(user.getPassword())){
+                    } else if (username.equals(user.getUserName()) && !password.equals(user.getPassword())) {
                         logger.error("Unable to login because of incorrect username or password.");
                         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
                         messageBox.setText(Language.getTranslatedText("error"));
@@ -165,7 +184,7 @@ public class LoginComponent {
                         messageBox.open();
                     }
                 }
-                if(!userFound){
+                if (!userFound) {
                     logger.error("User with the name " + username + " does not exist!");
                     MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
                     messageBox.setText(Language.getTranslatedText("error"));
@@ -181,6 +200,7 @@ public class LoginComponent {
         title.setText(Language.getTranslatedText("login"));
         usernameLabel.setText(Language.getTranslatedText("username"));
         passwordLabel.setText(Language.getTranslatedText("password"));
+        showHideButton.setText(Language.getTranslatedText("showHide"));
         loginButton.setText(Language.getTranslatedText("login"));
         adjustLabelWidth(title);
     }

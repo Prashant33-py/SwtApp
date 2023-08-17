@@ -1,6 +1,5 @@
 package org.swt.components;
 
-import org.apache.logging.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -22,11 +21,9 @@ import java.io.IOException;
 public class BookReviewComponent {
     private final Composite bookReviewComposite;
     private String bookAuthor;
-    private Element book;
-    private Logger logger;
-    public BookReviewComponent(Composite bookReviewComposite, Logger logger){
+
+    public BookReviewComponent(Composite bookReviewComposite){
         this.bookReviewComposite  = new Composite(bookReviewComposite, SWT.NONE);
-        this.logger = logger;
         this.bookReviewComposite.setLayout(new GridLayout(1, false));
         this.bookReviewComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         this.bookReviewComposite.setBackground(new Color(255,255,255));
@@ -64,7 +61,7 @@ public class BookReviewComponent {
 
         for (int i = 0; i < customerNodes.getLength(); i++) {
             Element bookReviewElement = (Element) customerNodes.item(i);
-            book = (Element) bookReviewElement.getElementsByTagName("book").item(0);
+            Element book = (Element) bookReviewElement.getElementsByTagName("book").item(0);
             String bookName = book.getElementsByTagName("title").item(0).getTextContent();
 
             String customerName = bookReviewElement.getElementsByTagName("customerName").item(0).getTextContent();
